@@ -27,7 +27,7 @@ submissions/
 ```
 ## 📘 Project Guide
 
-- 🇬🇧 [English Project Guide](submissions/docs/StudyBuild_Customer_Analytics_Booklet_EN.docx)
+- 🇬🇧 [English Project Guide](submissions/docs/StudyBuild_Customer_Analytics_Booklet_EN.pdf)
 - 🇮🇷 [Persian Project Guide](submissions/docs/StudyBuild_Customer_Analytics_Booklet_FA.pdf)
 ## 📌 Project Instructions
 
