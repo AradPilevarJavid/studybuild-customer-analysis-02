@@ -25,7 +25,10 @@ submissions/
     ├── README.md
     └── charts/
 ```
+## 📘 Project Guide
 
+- 🇬🇧 [English Project Guide](docs/Project02_Customer_Analytics_Guide_EN.pdf)
+- 🇮🇷 [Persian Project Guide](docs/Project02_راهنمای_پروژه_02_FA.pdf)
 ## 📌 Project Instructions
 
 The complete project scenario, tasks, and submission requirements are available in the **Issues** section.
