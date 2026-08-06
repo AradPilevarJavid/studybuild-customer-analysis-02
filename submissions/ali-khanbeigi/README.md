@@ -150,14 +150,6 @@ Limitation 3
 
 The dataset does not include the customer acquisition source (such as social media, search engines, or email campaigns). Therefore, it is not possible to evaluate the effectiveness of different marketing channels.
 
-Additional Columns That Would Improve the Analysis
-Profit per Order → To analyze customer and product profitability.
-Shipping Cost → To calculate the actual profit after delivery expenses.
-Product Category → To identify the best-performing product categories.
-Exact Order Date → To analyze seasonality and sales trends.
-Customer Acquisition Source → To measure the performance of different marketing channels.
-Marketing Cost → To calculate Return on Marketing Investment (ROMI).
-Customer Registration Date → To analyze customer lifetime and retention.
 ---
 
 ## 10. Conclusion
