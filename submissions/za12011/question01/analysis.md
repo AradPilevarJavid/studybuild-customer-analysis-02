@@ -1,0 +1,1 @@
+The store's dominant customer is between 55 and 65 years old. In terms of gender, male customers represent the largest customer segment. Membership analysis shows that the Gold tier has the highest number of customers. Additionally, most customers make purchases using Android devices, and Online Wallet is the most commonly used payment method.
