@@ -95,6 +95,7 @@ Customers were segmented using simple business rules:
 ## 8. Business Recommendations
 
 Recommendation 1
+
 Evidence
 
 Mashhad generated the highest total revenue among all cities, indicating a strong market potential.
@@ -138,6 +139,7 @@ Monitor customer retention rate, repeat purchase frequency, and average customer
 ## 9. Dataset Limitations
 
 Dataset Limitations
+
 Limitation 1
 
 The dataset does not include the profit for each order. As a result, the analysis is based only on revenue, which may not reflect the actual profitability of customers or products.
