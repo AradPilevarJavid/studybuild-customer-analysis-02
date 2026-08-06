@@ -109,6 +109,7 @@ KPI
 Measure the increase in total revenue, number of new customers, and return on marketing investment (ROMI) after the campaign.
 
 Recommendation 2
+
 Evidence
 
 Several valuable customers were identified as At Risk because they had high spending but had not purchased for more than 180 days.
@@ -122,6 +123,7 @@ KPI
 Track the customer reactivation rate, repeat purchase rate, and revenue generated from reactivated customers.
 
 Recommendation 3
+
 Evidence
 
 The customer segmentation analysis identified Champions and Loyal Customers as the most valuable customer groups.
