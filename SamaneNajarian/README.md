@@ -1,0 +1,162 @@
+# Customer Behavior Analysis & VIP Customer Segmentation
+
+## 📌 Project Overview
+
+This project analyzes customer purchasing behavior to identify valuable customer segments, 
+understand revenue drivers, and provide data-driven recommendations for improving customer 
+retention and marketing strategies.
+
+Using customer transaction and demographic data, the project applies customer segmentation 
+techniques and predictive analysis to identify VIP customers and understand the characteristics 
+associated with high-value customers.
+
+---
+
+## 🎯 Business Objectives
+
+The main objectives of this project are:
+
+- Analyze customer purchasing patterns and key business KPIs.
+- Segment customers based on their purchasing behavior.
+- Identify high-value (VIP) customer groups.
+- Understand factors associated with customer loyalty.
+- Provide actionable recommendations for customer retention and marketing campaigns.
+
+---
+
+## 📂 Dataset Description
+
+The dataset contains customer information, transaction behavior, and engagement-related features, including:
+
+- Customer demographics (age, gender, location)
+- Membership information
+- Payment methods
+- Satisfaction scores
+- Discount usage
+- Purchase frequency
+- Total spending
+- Recency of purchases
+
+---
+
+# 🔍 Analysis Workflow
+
+## 1. Data Preparation
+
+The dataset was cleaned and prepared by:
+
+- Handling missing values and inconsistent data.
+- Transforming variables into appropriate formats.
+- Creating customer-level behavioral features.
+- Preparing categorical and numerical variables for analysis.
+
+---
+
+## 2. Customer Segmentation (RFM Analysis)
+
+Customers were segmented using RFM-based features:
+
+- **Recency (R):** How recently a customer made a purchase.
+- **Frequency (F):** How often a customer purchases.
+- **Monetary (M):** Total customer spending.
+
+K-Means clustering was applied to identify different customer groups.
+
+The optimal number of clusters was selected based on:
+
+- Within-Cluster Sum of Squares (WSS)
+- Silhouette Score
+
+---
+
+## 📊 Customer Segments
+
+Four customer groups were identified:
+
+### ⭐ VIP Customers
+Customers with high purchasing frequency and very high spending.  
+They represent the most valuable segment and should receive priority through loyalty programs and personalized offers.
+
+### 🌱 Fresh Customers
+Customers with limited purchasing activity and low spending.  
+They represent growth opportunities through onboarding campaigns and engagement strategies.
+
+### 🔄 Engaging Customers
+Customers with moderate-to-high activity and spending.  
+They have the potential to become VIP customers through targeted retention strategies.
+
+### ⚠️ Churn Customers
+Customers with reduced recent activity and lower engagement.  
+They require reactivation campaigns to prevent further customer loss.
+
+---
+
+# 💰 Pareto Analysis
+
+Revenue distribution was analyzed to identify whether a small group of customers generates most of the revenue.
+
+Key finding:
+
+- A relatively small percentage of customers contributes a large share of total revenue, highlighting the importance of retaining high-value customers.
+
+---
+
+# 🌟 VIP Customer Analysis
+
+Customer characteristics associated with VIP customers were analyzed.
+
+Main findings:
+
+- VIP customers are mainly associated with higher satisfaction levels.
+- Card-based payment behavior appears more common among valuable customers.
+- Customers outside Khorasan province showed stronger VIP representation in this dataset.
+
+---
+
+# 🌳 Customer Behavior Prediction
+
+A classification model was developed to understand patterns associated with VIP customers.
+
+The analysis showed that customer satisfaction and payment behavior were among the most important factors related to customer value.
+
+---
+
+# 📈 Business Recommendations
+
+Based on the analysis:
+
+- Develop personalized loyalty programs for VIP customers.
+- Target Engaging Customers with campaigns designed to increase purchase frequency.
+- Improve customer experience to increase satisfaction and loyalty.
+- Create reactivation campaigns for Churn Customers.
+- Focus marketing resources on high-value customer groups.
+
+---
+
+# 🛠️ Tools & Technologies
+
+- Python
+- Pandas
+- NumPy
+- Matplotlib
+- Seaborn
+- Scikit-learn
+- Statistical Analysis (Chi-square test)
+- K-Means Clustering
+- Decision Tree Classification
+
+---
+
+# 📁 Project Structure
+Customer-Behavior-Analysis/
+│
+├── data/
+│ └── customer_data.csv
+│
+├── notebooks/
+│ └── Customer_Analysis.ipynb
+│
+├── README.md
+└── requirements.txt
+
+<img width="468" height="645" alt="image" src="https://github.com/user-attachments/assets/82a6f0cd-4e61-4ce6-80df-641f6085bb8e" />
