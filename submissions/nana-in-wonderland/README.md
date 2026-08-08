@@ -166,16 +166,6 @@ Customers were classified into four business segments to support personalized ma
 
 ---
 
-## Discount Effectiveness
-
-A box plot compares customer spending distributions between customers who used discounts and those who did not.
-
-<p align="center">
-  <img src="images/discount-analysis.png" width="650">
-</p>
-
----
-
 ## Pareto Analysis
 
 The Pareto chart evaluates revenue concentration among customers.
