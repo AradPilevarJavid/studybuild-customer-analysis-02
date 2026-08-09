@@ -1,5 +1,5 @@
 # ============================================================================
-# RFM Customer Segmentation — Enhanced Shiny Dashboard  (v2 · Polished UI/UX)
+# RFM Customer Segmentation — Enhanced Shiny Dashboard  (v3 · Analytics Edition)
 # R port of: rfm_analysis.py  (StudyBuild Project 02 - Customer Analysis)
 # ----------------------------------------------------------------------------
 # Run with:
@@ -10,18 +10,19 @@
 # You can upload your own cleaned_dataset.xlsx / .csv from the sidebar.
 #
 # WHAT'S NEW IN THIS VERSION
+#   - 6 NEW TABS for analytical questions (Customer Profiles, Geographic Insights,
+#     Loyalty & Risk Analysis, Behavioral Analysis, Management Dashboard)
 #   - Modern "glass card" visual language: soft shadows, rounded corners,
 #     gradient navbar/hero, consistent spacing scale
 #   - Light/Dark mode toggle (bslib::input_dark_mode) that also re-themes plots
 #   - Custom Google Fonts (Inter for body, Poppins for headings)
 #   - Animated KPI value boxes with icon chips + subtle hover lift
-#   - Loading spinners (shinycssloaders) on every chart/table so switching
-#     filters never feels like a blank flash
+#   - Loading spinners (shinycssloaders) on every chart/table
 #   - Segment "chips" with matching colors used consistently across app
 #   - Business Insights tab redesigned as ranked cards with revenue-share
 #     progress bars instead of plain text
-#   - Sticky, collapsible sidebar with icon-labelled filter groups + a
-#     "reset filters" action + live filtered-row counter
+#   - Sticky, collapsible sidebar with icon-labelled filter groups +
+#     a "reset filters" action + live filtered-row counter
 #   - Empty-state / error-state cards instead of raw validate() text
 #   - Table styling upgraded (rounded pills for segment, right-aligned $s)
 # ============================================================================
@@ -129,8 +130,7 @@ compute_rfm <- function(df) {
       last_purchase_days  = suppressWarnings(as.numeric(last_purchase_days)),
       satisfaction_score  = suppressWarnings(as.numeric(satisfaction_score)),
       across(c(first_name, gender, city, province, membership_tier,
-               payment_method, device, discount_used),
-             ~ trimws(as.character(.x)))
+               payment_method, device, discount_used), ~ trimws(as.character(.x)))
     ) %>%
     filter(!is.na(total_spending), !is.na(purchase_count), !is.na(last_purchase_days))
 
@@ -143,7 +143,7 @@ compute_rfm <- function(df) {
       Frequency = purchase_count,
       Recency   = last_purchase_days,
       membership_tier, satisfaction_score, age, gender, city, province,
-      device, payment_method
+      device, payment_method, discount_used, returned_items
     ) %>%
     mutate(
       R_Score  = 6L - as.integer(ntile(Recency, 5)),
@@ -288,6 +288,27 @@ app_theme <- bs_theme(
     [data-bs-theme='dark'] .card { background:#1E293B; }
     [data-bs-theme='dark'] .bslib-sidebar-layout > .sidebar { background:#111827; }
     [data-bs-theme='dark'] .filter-group-label { color:#9CA3AF; }
+
+    /* ---- Recommendation Cards ---- */
+    .recommendation-container { padding: 0 1rem; }
+    .recommendation-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      box-shadow: 0 2px 8px rgba(15,23,42,.08);
+      border-left: 4px solid #4F46E5;
+      margin-bottom: 1rem;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .recommendation-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(15,23,42,.12);
+    }
+    [data-bs-theme='dark'] .recommendation-card {
+      background: #1E293B;
+      color: #E5E7EB;
+      border-left-color: #6366F1;
+    }
   ")
 
 ui <- page_navbar(
@@ -307,7 +328,7 @@ ui <- page_navbar(
     width = 320,
     class = "border-end",
     open = "desktop",
-    div(class = "sidebar-title mb-1", icon("sliders", class = "me-2"),"Data & Filters"),
+    div(class = "sidebar-title mb-1", icon("sliders", class = "me-2"), "Data & Filters"),
     p(class = "text-muted small mb-3", "Upload your data, then slice the dashboard below."),
 
     div(class = "filter-group-label", icon("file-arrow-up"), "Dataset"),
@@ -332,6 +353,7 @@ ui <- page_navbar(
         icon("circle-info"), " Tip: click a bar in the Overview chart to drill in.")
   ),
 
+  # --- Original Tabs ---
   nav_panel(
     "Overview",
     icon = icon("gauge-high"),
@@ -365,13 +387,13 @@ ui <- page_navbar(
       card(
         full_screen = TRUE,
         card_header(icon("chart-column", class = "me-2"), "RFM Combined Score Distribution (3\u201315)"),
-        card_body(withSpinner(plotlyOutput("plot_rfm_hist", height = "360px"),
+        card_body(withSpinner(plotlyOutput("plot_rfm_hist", height = "500px"),
                               color = BRAND_PRIMARY, type = 6))
       ),
       card(
         full_screen = TRUE,
         card_header(icon("table-cells", class = "me-2"), "Average R / F / M Scores by Segment"),
-        card_body(withSpinner(plotlyOutput("plot_heatmap", height = "360px"),
+        card_body(withSpinner(plotlyOutput("plot_heatmap", height = "800px"),
                               color = BRAND_PRIMARY, type = 6))
       )
     ),
@@ -391,7 +413,7 @@ ui <- page_navbar(
     card(
       full_screen = TRUE,
       card_header(icon("face-smile", class = "me-2"), "Average Satisfaction Score by Segment"),
-      card_body(withSpinner(plotlyOutput("plot_satisfaction", height = "340px"),
+      card_body(withSpinner(plotlyOutput("plot_satisfaction", height = "600px"),
                             color = BRAND_PRIMARY, type = 6))
     ),
     br(),
@@ -413,6 +435,144 @@ ui <- page_navbar(
     uiOutput("insights_cards")
   ),
 
+  # --- NEW TABS FOR ANALYTICAL QUESTIONS ---
+
+  # سوال 1: پروفایل مشتریان
+  nav_panel(
+    "Customer Profiles",
+    icon = icon("user-group"),
+    br(),
+    layout_columns(
+      col_widths = c(6, 6),
+      card(
+        full_screen = TRUE,
+        card_header(icon("chart-pie", class = "me-2"), "Age Distribution"),
+        card_body(withSpinner(plotlyOutput("plot_age_dist", height = "340px"), color = BRAND_PRIMARY, type = 6))
+      ),
+      card(
+        full_screen = TRUE,
+        card_header(icon("chart-pie", class = "me-2"), "Membership Tier Distribution"),
+        card_body(withSpinner(plotlyOutput("plot_tier_dist", height = "340px"), color = BRAND_PRIMARY, type = 6))
+      )
+    ),
+    br(),
+    layout_columns(
+      col_widths = c(6, 6),
+      card(
+        full_screen = TRUE,
+        card_header(icon("laptop", class = "me-2"), "Device Usage"),
+        card_body(withSpinner(plotlyOutput("plot_device_dist", height = "340px"), color = BRAND_PRIMARY, type = 6))
+      ),
+      card(
+        full_screen = TRUE,
+        card_header(icon("credit-card", class = "me-2"), "Payment Method Distribution"),
+        card_body(withSpinner(plotlyOutput("plot_payment_dist", height = "340px"), color = BRAND_PRIMARY, type = 6))
+      )
+    )
+  ),
+
+  # سوال 2: تحلیل جغرافیایی
+  nav_panel(
+    "Geographic Insights",
+    icon = icon("map-location-dot"),
+    br(),
+    layout_columns(
+      col_widths = c(6, 6),
+      card(
+        full_screen = TRUE,
+        card_header(icon("city", class = "me-2"), "Top 10 Cities by Total Spending"),
+        card_body(withSpinner(plotlyOutput("plot_top_cities", height = "400px"), color = BRAND_PRIMARY, type = 6))
+      ),
+      card(
+        full_screen = TRUE,
+        card_header(icon("face-smile", class = "me-2"), "City Value vs. Satisfaction"),
+        card_body(withSpinner(plotlyOutput("plot_city_satisfaction", height = "400px"), color = BRAND_PRIMARY, type = 6))
+      )
+    )
+  ),
+
+  # سوال 3 و 4: اولویت وفاداری و مشتریان در معرض خطر
+  nav_panel(
+    "Loyalty & Risk Analysis",
+    icon = icon("shield-halved"),
+    br(),
+    layout_columns(
+      col_widths = c(6, 6),
+      card(
+        full_screen = TRUE,
+        card_header(icon("crown", class = "me-2"), "Top 10 Loyalty Priority Customers"),
+        card_body(withSpinner(plotlyOutput("plot_loyalty_priority", height = "400px"), color = BRAND_PRIMARY, type = 6))
+      ),
+      card(
+        full_screen = TRUE,
+        card_header(icon("triangle-exclamation", class = "me-2"), "At-Risk High-Value Customers"),
+        card_body(withSpinner(plotlyOutput("plot_at_risk", height = "400px"), color = BRAND_PRIMARY, type = 6))
+      )
+    )
+  ),
+
+  # سوال 5: تحلیل رفتاری
+  nav_panel(
+    "Behavioral Analysis",
+    icon = icon("chart-line"),
+    br(),
+    layout_columns(
+      col_widths = c(6, 6),
+      card(
+        full_screen = TRUE,
+        card_header(icon("tag", class = "me-2"), "Avg Spending by Discount Usage"),
+        card_body(withSpinner(plotlyOutput("plot_discount_spending", height = "340px"), color = BRAND_PRIMARY, type = 6))
+      ),
+      card(
+        full_screen = TRUE,
+        card_header(icon("box-open", class = "me-2"), "Avg Returns by Discount Usage"),
+        card_body(withSpinner(plotlyOutput("plot_discount_returns", height = "340px"), color = BRAND_PRIMARY, type = 6))
+      )
+    ),
+    br(),
+    layout_columns(
+      col_widths = c(6, 6),
+      card(
+        full_screen = TRUE,
+        card_header(icon("mobile-alt", class = "me-2"), "Avg Spending by Device"),
+        card_body(withSpinner(plotlyOutput("plot_device_spending", height = "340px"), color = BRAND_PRIMARY, type = 6))
+      ),
+      card(
+        full_screen = TRUE,
+        card_header(icon("money-bill", class = "me-2"), "Avg Spending by Payment Method"),
+        card_body(withSpinner(plotlyOutput("plot_payment_spending", height = "340px"), color = BRAND_PRIMARY, type = 6))
+      )
+    )
+  ),
+
+  # سوال 6: گزارش مدیریتی
+  nav_panel(
+    "Management Dashboard",
+    icon = icon("gauge-high"),
+    br(),
+    uiOutput("management_kpi_table"),
+    br(),
+    layout_columns(
+      col_widths = c(6, 6),
+      card(
+        full_screen = TRUE,
+        card_header(icon("city", class = "me-2"), "Top Cities by Revenue"),
+        card_body(withSpinner(plotlyOutput("plot_management_cities", height = "340px"), color = BRAND_PRIMARY, type = 6))
+      ),
+      card(
+        full_screen = TRUE,
+        card_header(icon("triangle-exclamation", class = "me-2"), "At-Risk Customers"),
+        card_body(withSpinner(plotlyOutput("plot_management_at_risk", height = "340px"), color = BRAND_PRIMARY, type = 6))
+      )
+    ),
+    br(),
+    card(
+      full_screen = TRUE,
+      card_header(icon("lightbulb", class = "me-2"), "Management Recommendations"),
+      card_body(uiOutput("management_recommendations"))
+    )
+  ),
+
   nav_item(tags$a(icon("circle-question"), class = "nav-link", title = "RFM = Recency, Frequency, Monetary"))
 )
 
@@ -422,9 +582,9 @@ ui <- page_navbar(
 
 server <- function(input, output, session) {
   app_state <- reactiveValues(error = NULL)
-  raw_data  <- reactiveVal(load_default_data())
+  raw_data <- reactiveVal(load_default_data())
 
-  # theme that follows the light/dark toggle, used for plot backgrounds/fonts
+  # Theme for plots (follows light/dark mode)
   plot_theme <- reactive({
     dark <- identical(input$dark_mode, "dark")
     list(
@@ -440,8 +600,7 @@ server <- function(input, output, session) {
     tryCatch({
       df <- read_uploaded_data(input$data_file$datapath, input$data_file$name)
       raw_data(df)
-      showNotification(tagList(icon("circle-check"), " File loaded successfully."),
-                       type = "message")
+      showNotification(tagList(icon("circle-check"), " File loaded successfully."), type = "message")
     }, error = function(e) {
       showNotification(paste("Could not read file:", e$message), type = "error", duration = 8)
     })
@@ -466,7 +625,7 @@ server <- function(input, output, session) {
     }
   })
 
-  # -------------------- dynamic sidebar filters -----------------------------
+  # -------------------- Dynamic Sidebar Filters -----------------------------
   output$filter_ui <- renderUI({
     rd <- rfm_data()
     req(rd)
@@ -516,17 +675,16 @@ server <- function(input, output, session) {
     clicked_segment(NULL)
   })
 
-  # -------------------- click-to-filter (Overview bar chart) ---------------
+  # Click-to-filter (Overview bar chart)
   clicked_segment <- reactiveVal(NULL)
-
   observeEvent(event_data("plotly_click", source = "segDist"), {
     ev <- event_data("plotly_click", source = "segDist")
     req(ev)
     clicked_segment(ev$y)
   })
-
   observeEvent(input$clear_click_filter, { clicked_segment(NULL) })
 
+  # Filtered data based on sidebar and chart clicks
   filtered_data <- reactive({
     rd <- rfm_data()
     req(rd)
@@ -557,7 +715,7 @@ server <- function(input, output, session) {
                                 scales::comma(n_shown), scales::comma(n_total)))
   })
 
-  # -------------------- KPI value boxes -------------------------------------
+  # KPI value boxes
   kpi_box <- function(label, value, icon_name, gradient) {
     div(class = "kpi-box", style = sprintf("background:%s;", gradient),
         icon(icon_name, class = "kpi-icon"),
@@ -585,7 +743,7 @@ server <- function(input, output, session) {
     )
   })
 
-  # -------------------- Overview plots --------------------------------------
+  # --- Overview Plots ---
   output$plot_segment_dist <- renderPlotly({
     d <- filtered_data(); req(d)
     if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
@@ -593,10 +751,8 @@ server <- function(input, output, session) {
     seg <- d %>% count(Segment, name = "Count") %>% arrange(Count)
     seg$Segment <- factor(seg$Segment, levels = seg$Segment)
 
-    plot_ly(seg, x = ~Count, y = ~Segment, type = "bar", orientation = "h",
-            source = "segDist",
-            marker = list(color = unname(SEGMENT_COLORS[as.character(seg$Segment)]),
-                          line = list(width = 0)),
+    plot_ly(seg, x = ~Count, y = ~Segment, type = "bar", orientation = "h", source = "segDist",
+            marker = list(color = unname(SEGMENT_COLORS[as.character(seg$Segment)]), line = list(width = 0)),
             text = ~Count, textposition = "outside",
             hovertemplate = "%{y}: %{x} customers<extra></extra>") %>%
       layout(xaxis = list(title = "Number of Customers", gridcolor = pt$grid, zeroline = FALSE),
@@ -610,13 +766,11 @@ server <- function(input, output, session) {
     d <- filtered_data(); req(d)
     if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
     pt <- plot_theme()
-    rev <- d %>% group_by(Segment) %>% summarise(Revenue = sum(Monetary), .groups = "drop") %>%
-      arrange(Revenue)
+    rev <- d %>% group_by(Segment) %>% summarise(Revenue = sum(Monetary), .groups = "drop") %>% arrange(Revenue)
     rev$Segment <- factor(rev$Segment, levels = rev$Segment)
 
     plot_ly(rev, x = ~Revenue, y = ~Segment, type = "bar", orientation = "h",
-            marker = list(color = unname(SEGMENT_COLORS[as.character(rev$Segment)]),
-                          line = list(width = 0)),
+            marker = list(color = unname(SEGMENT_COLORS[as.character(rev$Segment)]), line = list(width = 0)),
             text = ~scales::dollar(Revenue), textposition = "outside",
             hovertemplate = "%{y}: %{x:$,.0f}<extra></extra>") %>%
       layout(xaxis = list(title = "Revenue", gridcolor = pt$grid, zeroline = FALSE),
@@ -626,7 +780,7 @@ server <- function(input, output, session) {
       config(displayModeBar = FALSE)
   })
 
-  # -------------------- RFM Explorer plots -----------------------------------
+  # --- RFM Explorer Plots ---
   output$plot_rfm_hist <- renderPlotly({
     d <- filtered_data(); req(d)
     if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
@@ -648,8 +802,7 @@ server <- function(input, output, session) {
       summarise(R = mean(R_Score), F = mean(F_Score), M = mean(M_Score), .groups = "drop")
     z <- t(as.matrix(hm[, c("R", "F", "M")]))
 
-    plot_ly(x = hm$Segment, y = c("R_Score", "F_Score", "M_Score"), z = z,
-            type = "heatmap",
+    plot_ly(x = hm$Segment, y = c("R_Score", "F_Score", "M_Score"), z = z, type = "heatmap",
             colors = grDevices::colorRamp(c("#EF4444", "#F59E0B", "#FDE68A", "#86EFAC", "#4F46E5")),
             text = round(z, 1), texttemplate = "%{text}", showscale = TRUE) %>%
       layout(xaxis = list(title = "", gridcolor = pt$grid),
@@ -665,9 +818,7 @@ server <- function(input, output, session) {
     pt <- plot_theme()
     plot_ly(d, x = ~Recency, y = ~Frequency, color = ~Monetary,
             colors = VIRIDIS_LIKE, type = "scatter", mode = "markers",
-            text = ~paste0("Customer: ", customer_id,
-                           "<br>Segment: ", Segment,
-                           "<br>Monetary: ", scales::dollar(Monetary)),
+            text = ~paste0("Customer: ", customer_id, "<br>Segment: ", Segment, "<br>Monetary: ", scales::dollar(Monetary)),
             hoverinfo = "text",
             marker = list(size = 9, opacity = 0.78, line = list(color = "white", width = 0.5))) %>%
       layout(xaxis = list(title = "Recency (days since last purchase)", gridcolor = pt$grid),
@@ -677,7 +828,7 @@ server <- function(input, output, session) {
       config(displayModeBar = FALSE)
   })
 
-  # -------------------- Segment Details --------------------------------------
+  # --- Segment Details ---
   output$plot_satisfaction <- renderPlotly({
     d <- filtered_data(); req(d)
     if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
@@ -688,8 +839,7 @@ server <- function(input, output, session) {
     sat$Segment <- factor(sat$Segment, levels = sat$Segment)
 
     plot_ly(sat, x = ~Avg_Satisfaction, y = ~Segment, type = "bar", orientation = "h",
-            marker = list(color = unname(SEGMENT_COLORS[as.character(sat$Segment)]),
-                          line = list(width = 0)),
+            marker = list(color = unname(SEGMENT_COLORS[as.character(sat$Segment)]), line = list(width = 0)),
             text = ~round(Avg_Satisfaction, 2), textposition = "outside",
             hovertemplate = "%{y}: %{x:.2f}<extra></extra>") %>%
       layout(xaxis = list(title = "Average Satisfaction Score", range = c(0, 5.5), gridcolor = pt$grid),
@@ -707,22 +857,17 @@ server <- function(input, output, session) {
              satisfaction_score, gender, city, province, device, payment_method) %>%
       arrange(desc(Monetary))
 
-    datatable(tbl, filter = "top", rownames = FALSE,
-              class = "table table-hover",
-              options = list(
-                pageLength = 15, scrollX = TRUE,
-                dom = "lftip",
-                columnDefs = list(list(className = "dt-center", targets = c(6, 7, 8, 9)))
-              )) %>%
+    datatable(tbl, filter = "top", rownames = FALSE, class = "table table-hover",
+              options = list(pageLength = 15, scrollX = TRUE, dom = "lftip",
+                             columnDefs = list(list(className = "dt-center", targets = c(6, 7, 8, 9))))) %>%
       formatCurrency("Monetary", currency = "$") %>%
       formatStyle("Segment",
                   backgroundColor = styleEqual(names(SEGMENT_COLORS), unname(SEGMENT_COLORS)),
-                  color = "white", fontWeight = "bold",
-                  borderRadius = "999px") %>%
+                  color = "white", fontWeight = "bold", borderRadius = "999px") %>%
       formatStyle("RFM_Score", fontWeight = "bold", color = BRAND_PRIMARY)
   })
 
-  # -------------------- Business Insights -------------------------------------
+  # --- Business Insights ---
   output$insights_cards <- renderUI({
     d <- rfm_data(); req(d)
     seg_stats <- d %>%
@@ -758,7 +903,384 @@ server <- function(input, output, session) {
     do.call(layout_columns, c(cards, list(col_widths = 4)))
   })
 
-  # -------------------- Download full results ---------------------------------
+  # ==================== سوال 1: پروفایل مشتریان ====================
+  output$plot_age_dist <- renderPlotly({
+    d <- filtered_data(); req(d)
+    if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
+    pt <- plot_theme()
+
+    age_dist <- d %>%
+      mutate(age_group = cut(age, breaks = seq(floor(min(age, na.rm = TRUE)),
+                                               ceiling(max(age, na.rm = TRUE)) + 1, by = 10))) %>%
+      count(age_group, name = "Count") %>%
+      arrange(age_group)
+
+    plot_ly(age_dist, x = ~age_group, y = ~Count, type = "bar",
+            marker = list(color = BRAND_PRIMARY),
+            text = ~Count,
+            hovertemplate = "Age Group: %{x}<br>Count: %{y}<extra></extra>") %>%
+      layout(xaxis = list(title = "Age Group", gridcolor = pt$grid),
+             yaxis = list(title = "Number of Customers", gridcolor = pt$grid),
+             font = pt$font,
+             plot_bgcolor = pt$plot, paper_bgcolor = pt$paper) %>%
+      config(displayModeBar = FALSE)
+  })
+
+  output$plot_tier_dist <- renderPlotly({
+    d <- filtered_data(); req(d)
+    if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
+    pt <- plot_theme()
+
+    tier_dist <- d %>% count(membership_tier, name = "Count")
+
+    plot_ly(tier_dist, labels = ~membership_tier, values = ~Count, type = "pie",
+            marker = list(colors = c(BRAND_PRIMARY, BRAND_SECONDARY, BRAND_SUCCESS)),
+            textinfo = "percent+label",
+            hovertemplate = "%{label}<br>Count: %{value}<extra></extra>") %>%
+      layout(font = pt$font,
+             plot_bgcolor = pt$plot, paper_bgcolor = pt$paper) %>%
+      config(displayModeBar = FALSE)
+  })
+
+  output$plot_device_dist <- renderPlotly({
+    d <- filtered_data(); req(d)
+    if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
+    pt <- plot_theme()
+
+    device_dist <- d %>% count(device, name = "Count") %>% arrange(desc(Count))
+
+    plot_ly(device_dist, x = ~Count, y = ~device, type = "bar", orientation = "h",
+            marker = list(color = BRAND_SECONDARY),
+            text = ~Count,
+            hovertemplate = "Device: %{y}<br>Count: %{x}<extra></extra>") %>%
+      layout(xaxis = list(title = "Number of Customers", gridcolor = pt$grid),
+             yaxis = list(title = "", gridcolor = pt$grid),
+             font = pt$font,
+             plot_bgcolor = pt$plot, paper_bgcolor = pt$paper) %>%
+      config(displayModeBar = FALSE)
+  })
+
+  output$plot_payment_dist <- renderPlotly({
+    d <- filtered_data(); req(d)
+    if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
+    pt <- plot_theme()
+
+    payment_dist <- d %>% count(payment_method, name = "Count") %>% arrange(desc(Count))
+
+    plot_ly(payment_dist, x = ~Count, y = ~payment_method, type = "bar", orientation = "h",
+            marker = list(color = BRAND_SUCCESS),
+            text = ~Count,
+            hovertemplate = "Payment Method: %{y}<br>Count: %{x}<extra></extra>") %>%
+      layout(xaxis = list(title = "Number of Customers", gridcolor = pt$grid),
+             yaxis = list(title = "", gridcolor = pt$grid),
+             font = pt$font,
+             plot_bgcolor = pt$plot, paper_bgcolor = pt$paper) %>%
+      config(displayModeBar = FALSE)
+  })
+
+  # ==================== سوال 2: تحلیل جغرافیایی ====================
+  output$plot_top_cities <- renderPlotly({
+    d <- filtered_data(); req(d)
+    if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
+    pt <- plot_theme()
+
+    top_cities <- d %>%
+      group_by(city) %>%
+      summarise(Total_Spending = sum(Monetary, na.rm = TRUE)) %>%
+      arrange(desc(Total_Spending)) %>%
+      head(10)
+
+    plot_ly(top_cities, x = ~Total_Spending, y = ~city, type = "bar", orientation = "h",
+            marker = list(color = BRAND_PRIMARY),
+            text = ~scales::dollar(Total_Spending),
+            hovertemplate = "City: %{y}<br>Total Spending: %{x:$,.0f}<extra></extra>") %>%
+      layout(xaxis = list(title = "Total Spending", gridcolor = pt$grid),
+             yaxis = list(title = "", gridcolor = pt$grid),
+             font = pt$font,
+             plot_bgcolor = pt$plot, paper_bgcolor = pt$paper) %>%
+      config(displayModeBar = FALSE)
+  })
+
+  output$plot_city_satisfaction <- renderPlotly({
+    d <- filtered_data(); req(d)
+    if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
+    pt <- plot_theme()
+
+    city_sat <- d %>%
+      group_by(city) %>%
+      summarise(
+        Avg_Spending = mean(Monetary, na.rm = TRUE),
+        Avg_Satisfaction = mean(satisfaction_score, na.rm = TRUE)
+      ) %>%
+      na.omit()
+
+    plot_ly(city_sat, x = ~Avg_Spending, y = ~Avg_Satisfaction, type = "scatter", mode = "markers",
+            marker = list(size = 10, color = BRAND_SECONDARY, opacity = 0.7),
+            text = ~paste("City:", city, "<br>Avg Spending:", scales::dollar(Avg_Spending),
+                          "<br>Avg Satisfaction:", round(Avg_Satisfaction, 2)),
+            hoverinfo = "text") %>%
+      layout(xaxis = list(title = "Average Spending", gridcolor = pt$grid),
+             yaxis = list(title = "Average Satisfaction", gridcolor = pt$grid),
+             font = pt$font,
+             plot_bgcolor = pt$plot, paper_bgcolor = pt$paper) %>%
+      config(displayModeBar = FALSE)
+  })
+
+  # ==================== سوال 3: اولویت برنامه وفاداری ====================
+  output$plot_loyalty_priority <- renderPlotly({
+    d <- filtered_data(); req(d)
+    if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
+    pt <- plot_theme()
+
+    loyalty_priority <- d %>%
+      arrange(desc(Monetary), desc(Frequency), Recency) %>%
+      head(10)
+
+    plot_ly(loyalty_priority,
+            x = ~Frequency,
+            y = ~Monetary,
+            type = "scatter",
+            mode = "markers",
+            size = ~(1 / (Recency + 1)) * 100,
+            color = ~membership_tier,
+            colors = c(BRAND_PRIMARY, BRAND_SECONDARY, BRAND_SUCCESS),
+            text = ~paste("Customer:", first_name, "<br>ID:", customer_id,
+                          "<br>Spending:", scales::dollar(Monetary)),
+            hoverinfo = "text") %>%
+      layout(xaxis = list(title = "Purchase Count", gridcolor = pt$grid),
+             yaxis = list(title = "Total Spending", gridcolor = pt$grid),
+             font = pt$font,
+             plot_bgcolor = pt$plot, paper_bgcolor = pt$paper) %>%
+      config(displayModeBar = FALSE)
+  })
+
+  # ==================== سوال 4: مشتریان در معرض خطر ====================
+  output$plot_at_risk <- renderPlotly({
+    d <- filtered_data(); req(d)
+    if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
+    pt <- plot_theme()
+
+    at_risk <- d %>%
+      filter(Recency > 90 & Monetary > mean(Monetary, na.rm = TRUE))
+
+    plot_ly(at_risk,
+            x = ~Recency,
+            y = ~Monetary,
+            type = "scatter",
+            mode = "markers",
+            marker = list(size = 12, color = BRAND_DANGER, opacity = 0.8),
+            text = ~paste("Customer:", first_name, "<br>ID:", customer_id,
+                          "<br>Days Inactive:", Recency, "<br>Spending:", scales::dollar(Monetary)),
+            hoverinfo = "text") %>%
+      layout(xaxis = list(title = "Days Since Last Purchase", gridcolor = pt$grid),
+             yaxis = list(title = "Total Spending", gridcolor = pt$grid),
+             font = pt$font,
+             plot_bgcolor = pt$plot, paper_bgcolor = pt$paper) %>%
+      config(displayModeBar = FALSE)
+  })
+
+  # ==================== سوال 5: تحلیل رفتاری ====================
+  output$plot_discount_spending <- renderPlotly({
+    d <- filtered_data(); req(d)
+    if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
+    pt <- plot_theme()
+
+    discount_spending <- d %>%
+      group_by(discount_used) %>%
+      summarise(Avg_Spending = mean(Monetary, na.rm = TRUE))
+
+    plot_ly(discount_spending, x = ~discount_used, y = ~Avg_Spending, type = "bar",
+            marker = list(color = ifelse(discount_spending$discount_used == "Yes", BRAND_SUCCESS, BRAND_DANGER)),
+            text = ~scales::dollar(Avg_Spending),
+            hovertemplate = "Discount Used: %{x}<br>Avg Spending: %{y:$,.0f}<extra></extra>") %>%
+      layout(xaxis = list(title = "Discount Used", gridcolor = pt$grid),
+             yaxis = list(title = "Average Spending", gridcolor = pt$grid),
+             font = pt$font,
+             plot_bgcolor = pt$plot, paper_bgcolor = pt$paper) %>%
+      config(displayModeBar = FALSE)
+  })
+
+  output$plot_discount_returns <- renderPlotly({
+    d <- filtered_data(); req(d)
+    if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
+    pt <- plot_theme()
+
+    discount_returns <- d %>%
+      group_by(discount_used) %>%
+      summarise(Avg_Returns = mean(returned_items, na.rm = TRUE))
+
+    plot_ly(discount_returns, x = ~discount_used, y = ~Avg_Returns, type = "bar",
+            marker = list(color = ifelse(discount_returns$discount_used == "Yes", BRAND_WARNING, BRAND_INFO)),
+            text = ~round(Avg_Returns, 2),
+            hovertemplate = "Discount Used: %{x}<br>Avg Returns: %{y:.2f}<extra></extra>") %>%
+      layout(xaxis = list(title = "Discount Used", gridcolor = pt$grid),
+             yaxis = list(title = "Average Returns", gridcolor = pt$grid),
+             font = pt$font,
+             plot_bgcolor = pt$plot, paper_bgcolor = pt$paper) %>%
+      config(displayModeBar = FALSE)
+  })
+
+  output$plot_device_spending <- renderPlotly({
+    d <- filtered_data(); req(d)
+    if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
+    pt <- plot_theme()
+
+    device_spending <- d %>%
+      group_by(device) %>%
+      summarise(Avg_Spending = mean(Monetary, na.rm = TRUE)) %>%
+      arrange(desc(Avg_Spending))
+
+    plot_ly(device_spending, x = ~Avg_Spending, y = ~device, type = "bar", orientation = "h",
+            marker = list(color = BRAND_SECONDARY),
+            text = ~scales::dollar(Avg_Spending),
+            hovertemplate = "Device: %{y}<br>Avg Spending: %{x:$,.0f}<extra></extra>") %>%
+      layout(xaxis = list(title = "Average Spending", gridcolor = pt$grid),
+             yaxis = list(title = "", gridcolor = pt$grid),
+             font = pt$font,
+             plot_bgcolor = pt$plot, paper_bgcolor = pt$paper) %>%
+      config(displayModeBar = FALSE)
+  })
+
+  output$plot_payment_spending <- renderPlotly({
+    d <- filtered_data(); req(d)
+    if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
+    pt <- plot_theme()
+
+    payment_spending <- d %>%
+      group_by(payment_method) %>%
+      summarise(Avg_Spending = mean(Monetary, na.rm = TRUE)) %>%
+      arrange(desc(Avg_Spending))
+
+    plot_ly(payment_spending, x = ~Avg_Spending, y = ~payment_method, type = "bar", orientation = "h",
+            marker = list(color = BRAND_INFO),
+            text = ~scales::dollar(Avg_Spending),
+            hovertemplate = "Payment Method: %{y}<br>Avg Spending: %{x:$,.0f}<extra></extra>") %>%
+      layout(xaxis = list(title = "Average Spending", gridcolor = pt$grid),
+             yaxis = list(title = "", gridcolor = pt$grid),
+             font = pt$font,
+             plot_bgcolor = pt$plot, paper_bgcolor = pt$paper) %>%
+      config(displayModeBar = FALSE)
+  })
+
+  # ==================== سوال 6: داشبورد مدیریتی ====================
+
+
+  output$kpi_table_ui <- renderDT({
+    d <- filtered_data(); req(d)
+    total_customers <- nrow(d)
+    total_revenue <- sum(d$Monetary, na.rm = TRUE)
+    avg_rfm_score <- mean(d$RFM_Score, na.rm = TRUE)
+    champions_count <- sum(d$Segment == "Champions")
+    at_risk_count <- sum(d$Segment == "At Risk" | d$Segment == "Need Attention")
+    avg_satisfaction <- mean(d$satisfaction_score, na.rm = TRUE)
+
+    kpi_table <- data.frame(
+      Metric = c("Total Customers", "Total Revenue", "Avg RFM Score", "Champions", "At-Risk Customers", "Avg Satisfaction"),
+      Value = c(
+        scales::comma(total_customers),
+        scales::dollar(total_revenue),
+        round(avg_rfm_score, 1),
+        scales::comma(champions_count),
+        scales::comma(at_risk_count),
+        round(avg_satisfaction, 2)
+      )
+    )
+
+    datatable(kpi_table, rownames = FALSE, class = "table table-hover",
+              options = list(pageLength = 6, scrollX = FALSE, dom = "t",
+                             columnDefs = list(list(className = "dt-center", targets = "_all")))) %>%
+      formatStyle("Metric", fontWeight = "bold")
+  })
+
+  output$plot_management_cities <- renderPlotly({
+    d <- filtered_data(); req(d)
+    if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
+    pt <- plot_theme()
+
+    top_cities <- d %>%
+      group_by(city) %>%
+      summarise(Total_Spending = sum(Monetary, na.rm = TRUE)) %>%
+      arrange(desc(Total_Spending)) %>%
+      head(5)
+
+    plot_ly(top_cities, x = ~Total_Spending, y = ~city, type = "bar", orientation = "h",
+            marker = list(color = BRAND_PRIMARY),
+            text = ~scales::dollar(Total_Spending),
+            hovertemplate = "City: %{y}<br>Total Spending: %{x:$,.0f}<extra></extra>") %>%
+      layout(xaxis = list(title = "Total Spending", gridcolor = pt$grid),
+             yaxis = list(title = "", gridcolor = pt$grid),
+             font = pt$font,
+             plot_bgcolor = pt$plot, paper_bgcolor = pt$paper) %>%
+      config(displayModeBar = FALSE)
+  })
+
+  output$plot_management_at_risk <- renderPlotly({
+    d <- filtered_data(); req(d)
+    if (nrow(d) == 0) return(plotly_empty(type = "scatter", mode = "markers"))
+    pt <- plot_theme()
+
+    at_risk <- d %>%
+      filter(Segment %in% c("At Risk", "Need Attention")) %>%
+      arrange(desc(Monetary))
+
+    plot_ly(at_risk,
+            x = ~Recency,
+            y = ~Monetary,
+            type = "scatter",
+            mode = "markers",
+            color = ~Segment,
+            colors = c(BRAND_DANGER, BRAND_WARNING),
+            text = ~paste("Customer:", first_name, "<br>Segment:", Segment,
+                          "<br>Spending:", scales::dollar(Monetary)),
+            hoverinfo = "text") %>%
+      layout(xaxis = list(title = "Days Since Last Purchase", gridcolor = pt$grid),
+             yaxis = list(title = "Total Spending", gridcolor = pt$grid),
+             font = pt$font,
+             plot_bgcolor = pt$plot, paper_bgcolor = pt$paper) %>%
+      config(displayModeBar = FALSE)
+  })
+
+  output$management_recommendations <- renderUI({
+    d <- rfm_data(); req(d)
+
+    champions_revenue <- d %>%
+      filter(Segment == "Champions") %>%
+      summarise(Revenue = sum(Monetary, na.rm = TRUE)) %>%
+      pull(Revenue)
+
+    at_risk_customers <- d %>%
+      filter(Segment %in% c("At Risk", "Need Attention")) %>%
+      nrow()
+
+    avg_satisfaction <- mean(d$satisfaction_score, na.rm = TRUE)
+
+    div(
+      class = "recommendation-container",
+      div(
+        class = "recommendation-card mb-3",
+        h5(icon("crown", class = "me-2"), "1. تمرکز بر Champions"),
+        p(class = "mb-1", strong("شواهد: "), paste("Champions با", scales::dollar(champions_revenue), "درآمد، سهم عمده‌ای در فروش دارند.")),
+        p(class = "mb-1", strong("اقدام: "), "ارائه خدمات VIP، دسترسی انحصاری و مشوق‌های ارجاع به Champions."),
+        p(class = "mb-0", strong("KPI هدف: "), "افزایش سهم درآمد Champions به میزان 10% در 3 ماه.")
+      ),
+      div(
+        class = "recommendation-card mb-3",
+        h5(icon("triangle-exclamation", class = "me-2"), "2. بازگرداندن مشتریان در معرض خطر"),
+        p(class = "mb-1", strong("شواهد: "), paste(at_risk_customers, "مشتری در آستانه ترک هستند.")),
+        p(class = "mb-1", strong("اقدام: "), "اجرای کمپین‌های شخصی‌سازی‌شده با تخفیف‌های محدود برای بازگرداندن آن‌ها."),
+        p(class = "mb-0", strong("KPI هدف: "), "کاهش 20% مشتریان در معرض خطر در 2 ماه.")
+      ),
+      div(
+        class = "recommendation-card",
+        h5(icon("face-smile", class = "me-2"), "3. بهبود رضایت مشتریان"),
+        p(class = "mb-1", strong("شواهد: "), paste("امتیاز رضایت متوسط:", round(avg_satisfaction, 2), ".")),
+        p(class = "mb-1", strong("اقدام: "), "برگزاری بررسی‌های رضایت و ارائه پیشنهادات سفارشی برای بخش‌های با رضایت پایین."),
+        p(class = "mb-0", strong("KPI هدف: "), "افزایش امتیاز رضایت متوسط به 4.5+.")
+      )
+    )
+  })
+
+  # --- Download Full Results ---
   output$download_results <- downloadHandler(
     filename = function() paste0("rfm_analysis_results_", Sys.Date(), ".xlsx"),
     content = function(file) {
@@ -779,8 +1301,10 @@ server <- function(input, output, session) {
         arrange(desc(Total_Revenue))
 
       wb <- createWorkbook()
-      addWorksheet(wb, "RFM_Scores");     writeData(wb, "RFM_Scores", d)
-      addWorksheet(wb, "Segment_Summary"); writeData(wb, "Segment_Summary", seg_stats)
+      addWorksheet(wb, "RFM_Scores")
+      writeData(wb, "RFM_Scores", d)
+      addWorksheet(wb, "Segment_Summary")
+      writeData(wb, "Segment_Summary", seg_stats)
 
       for (seg in unique(d$Segment)) {
         sheet_name <- substr(seg, 1, 31)
@@ -794,4 +1318,3 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
-
