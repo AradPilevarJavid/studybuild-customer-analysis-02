@@ -218,7 +218,7 @@ The dashboard provides a concise view of the most important business findings th
 - Average spending by membership tier
 
 These charts allow the CEO to quickly identify high-value customers, potential churn problems, geographic opportunities, and revenue concentration.
-image.png
+
 ![Charts](charts/charts.png)
 
 ---
