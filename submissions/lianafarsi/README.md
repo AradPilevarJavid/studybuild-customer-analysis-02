@@ -24,4 +24,4 @@ In this project, I acted as a Junior Data Analyst for an e-commerce platform. Th
 - `customer_analytics_lianafarsi.ipynb`: The main Colab notebook containing all Python code, EDA, and visualizations.
 - `customer_analytics_results.xlsx`: Final aggregated datasets and KPI summaries ready for stakeholder review.
 - `cleaned_dataset_lianafarsi.xlsx`: The prepared dataset used for this analysis.
-- `Management_Report.pdf`: A 1-page visual executive summary containing top charts and business recommendations.
+- `Report.pdf`: A 1-page visual executive summary containing top charts and business recommendations.
