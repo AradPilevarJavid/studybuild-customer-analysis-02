@@ -1,0 +1,654 @@
+\documentclass[11pt,a4paper]{article}
+
+% =========================================================
+% Packages
+% =========================================================
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{siunitx}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+\sisetup{
+    output-decimal-marker={.},
+    group-separator={,},
+    group-minimum-digits=4
+}
+
+% =========================================================
+% Document information
+% =========================================================
+\title{\textbf{Statistical and SQL-Based Customer Analytics for\\
+E-Commerce Decision Making}}
+\author{Mahdiyeh Mirzaei}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This study presents a statistical and SQL-based analysis of customer
+behavior in an e-commerce dataset containing 60 customers and 26 original
+variables. The analysis integrates descriptive statistics, data-quality
+diagnostics, non-parametric inference, correlation analysis, customer-value
+scoring, churn-risk classification, segmentation, and business-oriented
+aggregation. The primary objective is to translate transactional and
+customer-level observations into statistically interpretable evidence for
+customer relationship management and marketing decisions.
+
+The results indicate substantial heterogeneity in customer value and
+purchasing behavior. Total spending was strongly non-normal
+(Shapiro--Wilk $W=0.708$, $p<0.001$), while purchase count
+($W=0.957$, $p=0.033$), average order value
+($W=0.915$, $p<0.001$), age ($W=0.938$, $p=0.004$), and satisfaction
+score ($W=0.879$, $p<0.001$) also departed from normality. Spearman
+rank correlations showed a moderate positive association between purchase
+count and total spending ($\rho=0.613$), and a weaker positive association
+between average order value and total spending ($\rho=0.434$).
+Customer-value scoring divided the sample into three equally sized groups:
+20 high-value, 20 medium-value, and 20 low-value customers. The high-value
+segment generated approximately 70.8\% of total revenue.
+
+A churn-risk rule based on more than 180 days since the last purchase
+classified 36 of 60 customers (60\%) as at risk. Importantly, 12 customers
+were simultaneously classified as high-value and churn-risk, identifying
+a strategically critical retention segment. K-means clustering selected
+$k=3$ as the preferred solution, with a silhouette score of 0.316; a
+Kruskal--Wallis test confirmed statistically significant differences
+between clusters ($H=16.109$, $p=0.000318$). The discount analysis did not
+provide evidence of a meaningful spending difference between discount and
+non-discount customers (Mann--Whitney $p=0.4512$; Cohen's $d\approx-0.022$;
+bootstrap 95\% confidence interval for the mean difference:
+$[-2146.19,\,2400.88]$).
+
+Geographically, Mashhad produced the highest total revenue
+(64,118.44) and the highest mean customer spending (5,828.95), although
+its mean satisfaction score was only 2.91. Overall, the findings support
+targeted retention, value-based segmentation, geographically informed
+marketing, and selective rather than universal discounting.
+\end{abstract}
+
+\noindent\textbf{Keywords:} customer analytics; SQL; descriptive statistics;
+non-parametric statistics; customer lifetime value; churn risk; K-means;
+Mann--Whitney U; Kruskal--Wallis; e-commerce analytics.
+
+% =========================================================
+\section{Introduction}
+
+The rapid growth of e-commerce has increased the availability of
+customer-level transactional and behavioral data. However, the presence
+of data alone does not guarantee effective decision making. Managers need
+statistically defensible summaries that distinguish systematic patterns
+from random variation and identify customer groups with economically
+meaningful differences.
+
+The present study uses SQL outputs as the analytical foundation and
+combines database aggregation with statistical reasoning. The analysis
+addresses five central business questions:
+
+\begin{enumerate}[label=\arabic*.]
+    \item Which customers generate the greatest economic value?
+    \item Which customers are potentially vulnerable to churn?
+    \item Which geographical markets have the strongest revenue potential?
+    \item Is discount usage associated with higher customer spending?
+    \item Can customers be separated into statistically and behaviorally
+    meaningful segments?
+\end{enumerate}
+
+The analysis is deliberately designed around the distributional properties
+of the observed variables. Because several important measures violate
+normality, rank-based and distribution-free procedures are emphasized
+where appropriate.
+
+% =========================================================
+\section{Data and Analytical Framework}
+
+The analytical dataset contains 60 customers and 26 original variables.
+The principal variables include customer identifier, age, city, province,
+membership tier, purchase count, average order value (AOV), total spending,
+days since last purchase, discount usage, returned items, and satisfaction
+score.
+
+Additional analytical variables were constructed from the raw attributes:
+
+\begin{itemize}
+    \item customer value score;
+    \item customer value segment;
+    \item churn-risk indicator;
+    \item churn-risk label;
+    \item cluster membership.
+\end{itemize}
+
+The SQL layer was used for data validation, aggregation, ranking,
+cross-tabulation, and business summaries. Statistical analysis was then
+used to assess distributional characteristics, associations, group
+differences, and segmentation quality.
+
+% =========================================================
+\section{Data Quality Assessment}
+
+The first stage consisted of structural and logical quality checks.
+The dataset contained 60 customers and no duplicate records. The principal
+analytical variables did not contain material missingness that prevented
+the planned analyses.
+
+A consistency check compared observed total spending with the expected
+amount implied by purchase count and average order value:
+
+\begin{equation}
+E_i = \text{PurchaseCount}_i \times \text{AOV}_i.
+\end{equation}
+
+Two observations required additional review. Customer 1030 had observed
+total spending of 25,000.00 compared with an expected value of approximately
+4,079.14, producing a discrepancy of about 20,920.86. Customer 1040 had
+observed spending of 126.00 compared with an expected value of approximately
+1,280.44, producing a discrepancy of about 1,154.44.
+
+These observations should be validated against the underlying transaction
+system before the data are used for financial reconciliation or automated
+decision rules.
+
+Six records were also flagged for review in the returned-items analysis.
+Customers requiring review had substantially lower mean spending
+(596.10) and lower mean satisfaction (2.50) than customers without the
+flag (mean spending 4,040.29; mean satisfaction 3.04). This pattern
+suggests that return-related anomalies may also be associated with weaker
+customer experience.
+
+% =========================================================
+\section{Descriptive Statistical Analysis}
+
+The total observed revenue was 221,752.15, with a mean customer spending
+of approximately 3,695.87 and a mean AOV of approximately 213.16.
+The mean purchase count was approximately 17.38 transactions per customer.
+
+The distribution of customer spending was highly heterogeneous. The
+largest spending values were substantially above the central tendency,
+which is consistent with the observed non-normal distribution and
+motivates the use of robust and non-parametric procedures.
+
+\subsection{Normality Assessment}
+
+Normality was evaluated using the Shapiro--Wilk test. The results are
+summarized in Table~\ref{tab:normality}.
+
+\begin{table}[H]
+\centering
+\caption{Shapiro--Wilk normality tests}
+\label{tab:normality}
+\begin{tabular}{lrrl}
+\toprule
+Variable & $W$ & $p$-value & Interpretation \\
+\midrule
+Age & 0.938 & 0.004 & Non-normal \\
+Purchase Count & 0.957 & 0.033 & Non-normal \\
+Average Order Value & 0.915 & $<0.001$ & Non-normal \\
+Total Spending & 0.708 & $<0.001$ & Strongly non-normal \\
+Last Purchase Days & 0.970 & 0.142 & No evidence against normality \\
+Satisfaction Score & 0.879 & $<0.001$ & Non-normal \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At the conventional $\alpha=0.05$ significance level, normality was
+rejected for age, purchase count, AOV, total spending, and satisfaction.
+Consequently, rank-based statistics and robust summaries are more
+appropriate than relying exclusively on classical parametric assumptions.
+
+% =========================================================
+\section{Correlation Analysis}
+
+Because several variables were non-normal and the sample size was limited,
+Spearman's rank correlation coefficient was used to quantify monotonic
+associations.
+
+\begin{table}[H]
+\centering
+\caption{Selected Spearman rank correlations}
+\label{tab:corr}
+\begin{tabular}{lrr}
+\toprule
+Variable Pair & Spearman $\rho$ & Interpretation \\
+\midrule
+Purchase Count -- Total Spending & 0.613 & Moderate positive \\
+AOV -- Total Spending & 0.434 & Weak-to-moderate positive \\
+Last Purchase Days -- Satisfaction & -0.293 & Weak negative \\
+Age -- Purchase Count & 0.265 & Weak positive \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The strongest observed association was between purchase count and total
+spending ($\rho=0.613$), indicating that customers who purchase more
+frequently tend to generate greater cumulative revenue. Nevertheless,
+the relationship is not deterministic, because spending also depends on
+order value.
+
+The correlation between AOV and total spending was positive but weaker
+($\rho=0.434$), suggesting that both purchase frequency and order size
+contribute to customer value.
+
+% =========================================================
+\section{Customer Value Scoring}
+
+A composite customer-value score was constructed from standardized
+measures of total spending, purchase count, and AOV:
+
+\begin{equation}
+CVS =
+0.50Z(\text{Total Spending})
++0.30Z(\text{Purchase Count})
++0.20Z(\text{AOV}).
+\end{equation}
+
+The weighting scheme assigns the greatest contribution to cumulative
+economic value while retaining behavioral information from frequency and
+order size.
+
+Customers were divided into three equal-sized quantile groups:
+High Value, Medium Value, and Low Value.
+
+\begin{table}[H]
+\centering
+\caption{Customer-value segments}
+\label{tab:value}
+\begin{tabular}{lrrrr}
+\toprule
+Segment & $n$ & Mean Spending & Total Revenue & Revenue Share \\
+\midrule
+High Value & 20 & 7,846.92 & 156,938.43 & 70.77\% \\
+Medium Value & 20 & 2,278.88 & 45,577.59 & 20.55\% \\
+Low Value & 20 & 961.81 & 19,236.13 & 8.68\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The concentration of approximately 70.77\% of revenue within one-third
+of the customer base is a major managerial finding. It indicates a
+high degree of revenue concentration and supports differentiated
+customer relationship strategies.
+
+% =========================================================
+\section{Churn-Risk Analysis}
+
+Churn risk was operationalized using a recency threshold: customers with
+more than 180 days since their last purchase were classified as
+churn-risk customers.
+
+\begin{table}[H]
+\centering
+\caption{Churn-risk comparison}
+\label{tab:churn}
+\begin{tabular}{lrrrr}
+\toprule
+Group & $n$ & Mean Spending & Mean Purchases & Mean Last-Purchase Days \\
+\midrule
+Churn Risk & 36 & 3,816.63 & 16.89 & 265.14 \\
+Active & 24 & 3,514.73 & 18.13 & 102.08 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The churn-risk group contains 36 of 60 customers, corresponding to a
+60\% observed risk rate under the selected rule. The most important
+strategic subgroup consists of the 12 customers who are simultaneously
+high-value and churn-risk.
+
+This overlap is more informative than the overall churn rate because
+customer loss is economically asymmetric: losing a high-value customer
+is potentially more consequential than losing a low-value customer.
+
+It should be emphasized that the 180-day rule is a classification
+criterion rather than a probabilistic survival model. It therefore
+identifies operational risk rather than estimating a causal probability
+of future churn.
+
+% =========================================================
+\section{Geographical Analysis}
+
+City-level aggregation revealed substantial heterogeneity in revenue.
+
+\begin{table}[H]
+\centering
+\caption{Selected city-level performance indicators}
+\label{tab:city}
+\begin{tabular}{lrrrr}
+\toprule
+City & Customers & Total Revenue & Mean Spending & Mean Satisfaction \\
+\midrule
+Mashhad & 11 & 64,118.44 & 5,828.95 & 2.91 \\
+Tabriz & 12 & 36,192.49 & 3,016.04 & 3.00 \\
+Karaj & 7 & 26,189.81 & 3,741.40 & 2.86 \\
+Ahvaz & 8 & 23,384.78 & 2,923.10 & 3.50 \\
+Isfahan & 5 & 21,975.32 & 4,395.06 & 4.40 \\
+Shiraz & 6 & 20,715.92 & 3,452.65 & 2.00 \\
+Rasht & 5 & 15,168.54 & 3,033.71 & 2.60 \\
+Tehran & 6 & 14,006.85 & 2,334.48 & 2.67 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Mashhad generated the highest total revenue and the highest mean
+customer spending. However, its satisfaction score of 2.91 is not
+particularly strong. Thus, a pure revenue-maximization strategy may
+overlook customer-experience risk. Marketing investment in Mashhad
+should therefore be accompanied by service-quality monitoring.
+
+Isfahan provides a contrasting profile: its mean satisfaction score of
+4.40 is the highest in the dataset, while its customer base is relatively
+small. This combination may justify controlled customer-acquisition
+experiments.
+
+% =========================================================
+\section{Discount Effect Analysis}
+
+The relationship between discount usage and customer spending was
+examined using the Mann--Whitney U test because spending is strongly
+non-normal.
+
+The mean spending was 3,642.42 for discount users and 3,736.74 for
+non-users. The observed difference was not statistically significant:
+
+\begin{equation}
+p=0.4512.
+\end{equation}
+
+The standardized effect size was approximately
+
+\begin{equation}
+d\approx -0.022,
+\end{equation}
+
+which is practically negligible. A bootstrap 95\% confidence interval
+for the mean spending difference was approximately
+
+\begin{equation}
+[-2146.19,\;2400.88].
+\end{equation}
+
+Because the confidence interval includes zero and the effect size is
+close to zero, the data do not provide evidence that discount usage is
+associated with a systematic increase in spending.
+
+This result should not be interpreted as proof that discounts never work.
+Rather, within this observational sample, there is insufficient evidence
+of a general spending uplift attributable to discount usage. Targeted
+experimentation or randomized A/B testing would be preferable for causal
+evaluation.
+
+% =========================================================
+\section{Membership and Channel Analysis}
+
+Membership tiers exhibited heterogeneous economic profiles. Gold
+customers generated the highest total revenue, 75,153.20, while Silver
+customers had the highest mean spending per customer, approximately
+4,179.93. VIP customers had a higher mean satisfaction score of 3.40,
+whereas Silver customers had the lowest satisfaction score at 2.50.
+
+Payment-channel analysis showed that cash payments generated the largest
+total revenue (80,781.87), followed by online wallet payments (71,402.63)
+and card payments (69,567.65).
+
+Device analysis showed that web users generated approximately 78,876.06
+in revenue, followed by Android users at 74,945.08 and iPhone users at
+67,931.01. These figures describe observed channel performance and should
+not be interpreted causally without controlling for customer composition
+and exposure.
+
+% =========================================================
+\section{Age and Satisfaction Profiles}
+
+The 55+ age group exhibited the highest mean spending, approximately
+6,592.10, and an average purchase count of 21.35. Younger age groups
+generally exhibited lower spending levels.
+
+The relationship between satisfaction and spending was not monotonic
+enough to support a simple linear interpretation. Customers with a
+satisfaction score of 4 had mean spending of approximately 5,448.63,
+whereas the score-5 group had mean spending of approximately 2,677.52.
+
+This pattern demonstrates why customer satisfaction should not be treated
+as a direct proxy for economic value. Satisfaction and spending represent
+different dimensions of customer behavior and should be modeled jointly.
+
+% =========================================================
+\section{Cluster Analysis}
+
+K-means clustering was used to identify behavioral customer segments.
+The preferred number of clusters was $k=3$, with a silhouette coefficient
+of 0.316. Although the silhouette value indicates moderate rather than
+strong separation, it provides useful evidence of meaningful
+heterogeneity in the customer base.
+
+\begin{table}[H]
+\centering
+\caption{Cluster profiles}
+\label{tab:clusters}
+\begin{tabular}{lrrrrrr}
+\toprule
+Cluster & $n$ & Mean Age & Purchases & AOV & Spending & Satisfaction \\
+\midrule
+0 & 6 & 58.50 & 30.33 & 348.60 & 14,188.76 & 3.17 \\
+1 & 23 & 43.96 & 8.30 & 309.07 & 2,603.76 & 2.65 \\
+2 & 31 & 40.65 & 21.61 & 115.78 & 2,475.26 & 3.19 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Cluster 0 is particularly important because only six customers generate
+an average spending of 14,188.76. The total revenue attributed to this
+cluster is approximately 85,132.55, representing 38.39\% of cluster-level
+revenue.
+
+To test whether the clusters differ statistically, the Kruskal--Wallis
+test was applied. The result was
+
+\begin{equation}
+H=16.109,\qquad p=0.000318.
+\end{equation}
+
+At $\alpha=0.05$, the null hypothesis of identical distributions across
+clusters is rejected. Thus, the segmentation is supported by statistically
+significant between-cluster differences, although the magnitude and
+business meaning of each cluster should still be interpreted substantively.
+
+% =========================================================
+\section{Machine-Learning-Based Churn Diagnostics}
+
+As a supplementary predictive analysis, Logistic Regression and Random
+Forest models were evaluated using stratified five-fold cross-validation.
+The predictor set included age, purchase count, AOV, total spending,
+satisfaction score, and returned items. Last-purchase days was excluded
+from the predictive feature set to reduce target leakage because the
+churn label itself is constructed from recency.
+
+The mean ROC-AUC for Logistic Regression was 0.564
+($SD=0.084$), while Random Forest achieved 0.478
+($SD=0.096$). These values indicate weak discrimination and suggest that
+the available behavioral variables do not provide a strong predictive
+signal for the operational churn label.
+
+Random Forest feature importance ranked total spending (0.235), AOV
+(0.214), satisfaction (0.167), age (0.156), purchase count (0.149), and
+returned items (0.078) as the principal predictors.
+
+The relatively weak cross-validated AUC values imply that the current
+dataset is better suited to descriptive segmentation and risk
+prioritization than to high-confidence individual churn prediction.
+
+% =========================================================
+\section{Integrated Statistical Interpretation}
+
+The statistical evidence supports four broad conclusions.
+
+First, customer value is highly concentrated. The high-value segment
+contains only one-third of customers but generates approximately 70.77\%
+of revenue. This concentration increases the economic importance of
+retention among high-value customers.
+
+Second, the customer base exhibits substantial behavioral heterogeneity.
+The non-normal distributions, moderate correlations, and significant
+cluster differences all indicate that a single average customer profile
+would be an inadequate representation of the population.
+
+Third, churn risk is operationally substantial. Sixty percent of the
+sample meets the selected recency-based risk criterion, and 12 customers
+combine high economic value with elevated recency risk. These customers
+should be prioritized before broad, undifferentiated retention campaigns.
+
+Fourth, the evidence does not support universal discounting as a reliable
+revenue-growth mechanism. The Mann--Whitney test, near-zero effect size,
+and bootstrap confidence interval are all consistent with the conclusion
+that discount usage did not produce a detectable general spending
+difference in this sample.
+
+% =========================================================
+\section{Managerial Implications}
+
+The statistical findings translate into several actionable strategies:
+
+\begin{enumerate}
+    \item \textbf{Prioritize high-value churn-risk customers.}
+    The 12 customers in the intersection of the high-value and churn-risk
+    groups represent the most economically sensitive retention segment.
+
+    \item \textbf{Use value-based rather than uniform marketing.}
+    Since revenue is strongly concentrated, customer-level resource
+    allocation should reflect expected economic value.
+
+    \item \textbf{Treat Mashhad as a high-potential but experience-sensitive
+    market.} Its revenue performance is strong, but satisfaction should
+    be monitored before substantially increasing acquisition expenditure.
+
+    \item \textbf{Use discounts selectively.}
+    The lack of a significant spending difference suggests that blanket
+    discounting is not justified by the current evidence.
+
+    \item \textbf{Investigate data anomalies before automated decisions.}
+    The discrepancies identified for customers 1030 and 1040 may materially
+    affect customer-value calculations and should be reconciled.
+
+    \item \textbf{Use cluster-specific campaigns.}
+    The statistically significant differences between clusters support
+    differentiated communication, loyalty benefits, and retention
+    strategies.
+
+    \item \textbf{Improve predictive data collection.}
+    The weak cross-validated ROC-AUC values indicate that additional
+    temporal, behavioral, and interaction-level features would be useful
+    for future churn modeling.
+\end{enumerate}
+
+% =========================================================
+\section{Limitations}
+
+Several limitations should be considered when interpreting the results.
+First, the sample size is small ($n=60$), which limits statistical power
+and the stability of predictive models. Second, the analysis is
+observational; therefore, associations between discount usage, spending,
+satisfaction, and churn risk should not be interpreted as causal effects.
+
+Third, the churn definition is rule-based rather than derived from a
+time-to-event survival model. Fourth, the K-means solution provides
+moderate rather than strong separation, as reflected by a silhouette
+score of 0.316. Finally, data-quality discrepancies in selected records
+may influence individual-level rankings and should be resolved before
+operational deployment.
+
+% =========================================================
+\section{Overall Conclusion}
+
+This study demonstrates how SQL-based customer analytics can be extended
+into a statistically grounded decision-support framework. The analysis
+of 60 customers revealed pronounced heterogeneity in purchasing behavior,
+customer value, geographic performance, and churn risk.
+
+The strongest finding is the concentration of economic value: the
+high-value third of the customer base accounts for approximately 70.77\%
+of total revenue. At the same time, 36 customers, representing 60\% of
+the sample, satisfy the operational churn-risk criterion. The intersection
+of these two dimensions identifies 12 high-value customers who are also
+at risk of churn. From a managerial perspective, this group represents
+the most immediate retention opportunity because the potential economic
+cost of losing these customers is substantially greater than that of
+losing low-value customers.
+
+The inferential analysis further shows that customer behavior cannot be
+adequately summarized by simple means or normal-theory assumptions.
+Several variables are significantly non-normal, motivating the use of
+Spearman correlation, Mann--Whitney U, and Kruskal--Wallis procedures.
+The clustering analysis identifies three statistically distinguishable
+customer profiles, while the weak predictive AUC values indicate that
+the current feature set is insufficient for reliable individual-level
+churn prediction.
+
+The discount analysis is particularly important for managerial
+decision-making. No statistically significant spending difference was
+detected between discount users and non-users ($p=0.4512$), the estimated
+effect size was negligible, and the bootstrap confidence interval
+contained zero. Consequently, discounts should be viewed as a tactical
+instrument requiring targeting and experimentation rather than as a
+general-purpose mechanism for increasing customer spending.
+
+Finally, Mashhad emerged as the strongest revenue market, but its
+moderate satisfaction level highlights the need to balance acquisition
+with customer-experience improvement. Overall, the evidence supports a
+data-driven strategy centered on value-based segmentation, targeted
+retention, selective incentives, geographic prioritization, and stronger
+data-quality controls. Future research should extend the analysis with
+transaction-level temporal data, survival analysis, causal experiments
+for discount effectiveness, and richer behavioral features to improve
+predictive customer analytics.
+
+% =========================================================
+\section*{Key Statistical Indicators}
+
+\begin{table}[H]
+\centering
+\caption{Summary of principal analytical indicators}
+\begin{tabular}{lr}
+\toprule
+Indicator & Value \\
+\midrule
+Sample size & 60 customers \\
+Total revenue & 221,752.15 \\
+Mean customer spending & 3,695.87 \\
+Mean AOV & 213.16 \\
+High-value customers & 20 \\
+High-value revenue share & 70.77\% \\
+Churn-risk customers & 36 (60\%) \\
+High-value and churn-risk customers & 12 \\
+Best city by total revenue & Mashhad \\
+Mashhad total revenue & 64,118.44 \\
+Mashhad mean spending & 5,828.95 \\
+Discount test: Mann--Whitney $p$ & 0.4512 \\
+Discount effect size: Cohen's $d$ & $\approx -0.022$ \\
+Discount mean-difference bootstrap 95\% CI & $[-2146.19,2400.88]$ \\
+Optimal K-means $k$ & 3 \\
+Silhouette score & 0.316 \\
+Kruskal--Wallis $H$ & 16.109 \\
+Kruskal--Wallis $p$ & 0.000318 \\
+Logistic Regression mean ROC-AUC & 0.564 \\
+Random Forest mean ROC-AUC & 0.478 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

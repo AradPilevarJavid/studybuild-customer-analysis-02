@@ -1,0 +1,11 @@
+customer_id,first_name,city,membership_tier,purchase_count,avg_order_value,total_spending,customer_value_segment
+1030,Sina,Mashhad,VIP,26,156.89,25000.00,"High Value"
+1044,Mina,Shiraz,Gold,33,434.98,14354.34,"High Value"
+1057,Maryam,Ahvaz,Bronze,31,436.54,13532.74,"High Value"
+1012,Arash,Mashhad,Gold,27,434.50,11731.50,"High Value"
+1009,Kimia,Karaj,Silver,34,341.63,11615.42,"High Value"
+1059,Ali,Isfahan,Gold,31,287.05,8898.55,"High Value"
+1010,Arash,Karaj,Silver,19,381.13,7241.47,"High Value"
+1050,Reza,Mashhad,Bronze,30,206.60,6198.00,"High Value"
+1004,Sina,Mashhad,Gold,23,266.15,6121.45,"High Value"
+1055,Mina,Rasht,Bronze,19,319.38,6068.22,"High Value"

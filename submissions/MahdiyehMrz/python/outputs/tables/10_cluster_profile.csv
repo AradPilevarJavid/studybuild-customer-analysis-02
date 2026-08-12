@@ -1,0 +1,4 @@
+﻿cluster,customers,purchase_count,avg_order_value,total_spending,last_purchase_days,satisfaction_score
+0,6,30.33,348.6,14188.76,211.17,3.17
+1,23,8.3,309.07,2603.76,232.17,2.65
+2,31,21.61,115.78,2475.26,173.81,3.19

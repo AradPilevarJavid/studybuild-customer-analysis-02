@@ -1,0 +1,9 @@
+city,customer_count,total_revenue,avg_customer_value,avg_satisfaction,discount_usage_pct
+Mashhad,11,64118.44,5828.95,2.91,63.64
+Tabriz,12,36192.49,3016.04,3.00,16.67
+Karaj,7,26189.81,3741.40,2.86,14.29
+Ahvaz,8,23384.78,2923.10,3.50,50.00
+Isfahan,5,21975.32,4395.06,4.40,60.00
+Shiraz,6,20715.92,3452.65,2.00,50.00
+Rasht,5,15168.54,3033.71,2.60,40.00
+Tehran,6,14006.85,2334.48,2.67,66.67
