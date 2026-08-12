@@ -2,8 +2,6 @@
 
 ## Project overview
 
-This project looks at a small online retail customer dataset from a junior data analyst's point of view. The goal is to turn the customer records into useful business decisions instead of only reporting averages.
-
 The analysis covers the customer profile, advertising locations, loyalty candidates, customers at risk of becoming inactive, and descriptive differences related to discounts, devices, and payment methods.
 
 ## Data quality
