@@ -1,0 +1,16 @@
+customer_id,first_name,city,membership_tier,total_spending,purchase_count,avg_order_value,satisfaction_score
+1030,Sina,Mashhad,VIP,25000.00,26,156.89,4
+1012,Arash,Mashhad,Gold,11731.50,27,434.50,2
+1059,Ali,Isfahan,Gold,8898.55,31,287.05,5
+1050,Reza,Mashhad,Bronze,6198.00,30,206.60,2
+1053,Sina,Tehran,Gold,5805.54,18,322.53,1
+1005,Kimia,Isfahan,Silver,3899.42,23,169.54,4
+1006,Amir,Mashhad,Gold,3868.55,35,110.53,2
+1026,Amir,Ahvaz,Bronze,3689.51,11,335.41,4
+1020,Kimia,Isfahan,Bronze,2994.72,16,187.17,5
+1022,Reza,Mashhad,Silver,2540.58,6,423.43,2
+1007,Reza,Rasht,VIP,2237.35,29,77.15,5
+1001,Reza,Karaj,VIP,2066.01,17,121.53,5
+1018,Ali,Shiraz,VIP,1974.60,18,109.70,1
+1031,Zahra,Tehran,Silver,1915.74,18,106.43,3
+1041,Neda,Rasht,Bronze,1822.31,7,260.33,5

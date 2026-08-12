@@ -1,0 +1,4 @@
+cluster,customers,avg_age,avg_purchases,avg_order_value,avg_spending,avg_recency,avg_satisfaction
+0,6,58.50,30.33,348.60,14188.76,211.17,3.17
+1,23,43.96,8.30,309.07,2603.76,232.17,2.65
+2,31,40.65,21.61,115.78,2475.26,173.81,3.19

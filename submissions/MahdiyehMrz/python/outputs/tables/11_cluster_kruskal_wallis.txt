@@ -1,0 +1,2 @@
+Kruskal-Wallis statistic: 16.108806
+p-value: 0.000318
