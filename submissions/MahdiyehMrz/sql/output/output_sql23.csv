@@ -1,0 +1,5 @@
+membership_tier,customers,discount_users,discount_usage_pct,avg_spending
+Silver,8,3,37.50,4179.93
+Gold,19,10,52.63,3955.43
+VIP,15,5,33.33,3820.94
+Bronze,18,8,44.44,3102.52

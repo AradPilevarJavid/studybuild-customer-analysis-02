@@ -1,0 +1,9 @@
+city,province,customers,total_revenue,avg_customer_spending,avg_purchases,avg_satisfaction
+Mashhad,Khorasan,11,64118.44,5828.95,22.64,2.91
+Tabriz,"East Azerbaijan",12,36192.49,3016.04,15.75,3.00
+Karaj,Alborz,7,26189.81,3741.40,16.00,2.86
+Ahvaz,Khuzestan,8,23384.78,2923.10,13.88,3.50
+Isfahan,Isfahan,5,21975.32,4395.06,19.80,4.40
+Shiraz,Fars,6,20715.92,3452.65,16.33,2.00
+Rasht,Gilan,5,15168.54,3033.71,16.40,2.60
+Tehran,Tehran,6,14006.85,2334.48,17.17,2.67

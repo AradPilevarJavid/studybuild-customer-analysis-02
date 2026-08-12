@@ -1,0 +1,11 @@
+customer_id,first_name,city,membership_tier,purchase_count,avg_order_value,total_spending,satisfaction_score
+1057,Maryam,Ahvaz,Bronze,31,436.54,13532.74,4
+1026,Amir,Ahvaz,Bronze,11,335.41,3689.51,4
+1046,Maryam,Tabriz,VIP,15,328.23,4923.45,4
+1029,Ali,Tabriz,Gold,2,323.32,646.64,5
+1015,Kimia,Ahvaz,Gold,3,307.91,923.73,4
+1032,Neda,Isfahan,Silver,15,307.67,4615.05,5
+1059,Ali,Isfahan,Gold,31,287.05,8898.55,5
+1013,Neda,Karaj,Bronze,1,270.91,270.91,5
+1004,Sina,Mashhad,Gold,23,266.15,6121.45,4
+1041,Neda,Rasht,Bronze,7,260.33,1822.31,5

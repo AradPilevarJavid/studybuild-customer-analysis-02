@@ -1,0 +1,62 @@
+\contentsline {section}{Abstract}{1}{Doc-Start}%
+\contentsline {section}{\numberline {1}Introduction}{5}{section.1}%
+\contentsline {section}{\numberline {2}Data Description and Preparation}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Dataset Overview}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Data Quality}{6}{subsection.2.2}%
+\contentsline {section}{\numberline {3}Theoretical and Statistical Foundations}{7}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Descriptive Statistics}{7}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Standardization and Z-Scores}{7}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Shapiro--Wilk Normality Test}{7}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Spearman Rank Correlation}{8}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Customer Value Score}{8}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Recency-Based Churn Risk}{8}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Mann--Whitney U Test}{8}{subsection.3.7}%
+\contentsline {subsection}{\numberline {3.8}Effect Size: Cohen's $d$}{9}{subsection.3.8}%
+\contentsline {subsection}{\numberline {3.9}Bootstrap Confidence Interval}{9}{subsection.3.9}%
+\contentsline {subsection}{\numberline {3.10}K-Means Clustering}{9}{subsection.3.10}%
+\contentsline {subsection}{\numberline {3.11}Silhouette Coefficient}{9}{subsection.3.11}%
+\contentsline {subsection}{\numberline {3.12}Kruskal--Wallis Test}{9}{subsection.3.12}%
+\contentsline {subsection}{\numberline {3.13}Logistic Regression}{10}{subsection.3.13}%
+\contentsline {subsection}{\numberline {3.14}Random Forest}{10}{subsection.3.14}%
+\contentsline {subsection}{\numberline {3.15}ROC--AUC}{10}{subsection.3.15}%
+\contentsline {subsection}{\numberline {3.16}Statistical Decision Rule}{10}{subsection.3.16}%
+\contentsline {section}{\numberline {4}Data Quality Assessment}{11}{section.4}%
+\contentsline {section}{\numberline {5}Descriptive Statistical Analysis}{11}{section.5}%
+\contentsline {section}{\numberline {6}Analytical Framework and Methodology}{11}{section.6}%
+\contentsline {section}{\numberline {7}Exploratory Data Analysis}{13}{section.7}%
+\contentsline {section}{\numberline {8}Normality and Outlier Analysis}{13}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Normality Testing}{13}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Outlier Detection}{14}{subsection.8.2}%
+\contentsline {section}{\numberline {9}Correlation Analysis}{15}{section.9}%
+\contentsline {section}{\numberline {10}Customer Value Analysis}{16}{section.10}%
+\contentsline {section}{\numberline {11}Churn-Risk Analysis}{17}{section.11}%
+\contentsline {section}{\numberline {12}Customer Segmentation Using K-Means}{18}{section.12}%
+\contentsline {section}{\numberline {13}Cluster Profiles and Statistical Validation}{19}{section.13}%
+\contentsline {subsection}{\numberline {13.1}Cluster 0: Premium Customers}{19}{subsection.13.1}%
+\contentsline {subsection}{\numberline {13.2}Cluster 1: Low-Frequency Customers}{19}{subsection.13.2}%
+\contentsline {subsection}{\numberline {13.3}Cluster 2: Frequent Low-Basket Customers}{19}{subsection.13.3}%
+\contentsline {subsection}{\numberline {13.4}Kruskal--Wallis Validation}{19}{subsection.13.4}%
+\contentsline {section}{\numberline {14}Machine-Learning Churn Analysis}{20}{section.14}%
+\contentsline {subsection}{\numberline {14.1}Cross-Validation Results}{20}{subsection.14.1}%
+\contentsline {section}{\numberline {15}Random Forest Feature Importance}{21}{section.15}%
+\contentsline {section}{\numberline {16}Discount Effectiveness Analysis}{22}{section.16}%
+\contentsline {section}{\numberline {17}City-Level Marketing Opportunity}{23}{section.17}%
+\contentsline {section}{\numberline {18}Membership and Channel Analysis}{24}{section.18}%
+\contentsline {section}{\numberline {19}Age and Satisfaction Profiles}{24}{section.19}%
+\contentsline {section}{\numberline {20}Integrated Statistical Interpretation}{25}{section.20}%
+\contentsline {section}{\numberline {21}Business Recommendations}{25}{section.21}%
+\contentsline {subsection}{\numberline {21.1}Recommendation 1: High-Value Customer Retention}{25}{subsection.21.1}%
+\contentsline {subsection}{\numberline {21.2}Recommendation 2: Increase Average Order Value}{26}{subsection.21.2}%
+\contentsline {subsection}{\numberline {21.3}Recommendation 3: Controlled Marketing Experiment in Mashhad}{26}{subsection.21.3}%
+\contentsline {section}{\numberline {22}Customer Strategy Matrix}{27}{section.22}%
+\contentsline {subsection}{\numberline {22.1}Figure Provenance}{27}{subsection.22.1}%
+\contentsline {section}{\numberline {23}Limitations}{27}{section.23}%
+\contentsline {subsection}{\numberline {23.1}Small Sample Size}{27}{subsection.23.1}%
+\contentsline {subsection}{\numberline {23.2}Proxy Churn Definition}{27}{subsection.23.2}%
+\contentsline {subsection}{\numberline {23.3}Observational Discount Analysis}{27}{subsection.23.3}%
+\contentsline {subsection}{\numberline {23.4}Potential Sampling Bias}{28}{subsection.23.4}%
+\contentsline {subsection}{\numberline {23.5}Machine-Learning Performance}{28}{subsection.23.5}%
+\contentsline {section}{\numberline {24}Future Research}{28}{section.24}%
+\contentsline {section}{\numberline {25}Overall Conclusion}{29}{section.25}%
+\contentsline {section}{\numberline {26}Final Management Action Plan}{31}{section.26}%
+\contentsline {section}{\numberline {27}Key Statistical Indicators}{31}{section.27}%

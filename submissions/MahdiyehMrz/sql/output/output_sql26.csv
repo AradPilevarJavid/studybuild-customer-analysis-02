@@ -1,0 +1,4 @@
+payment_method,customers,total_revenue,avg_order_value
+Cash,19,80781.87,192.26
+"Online Wallet",23,71402.63,221.82
+Card,18,69567.65,224.14

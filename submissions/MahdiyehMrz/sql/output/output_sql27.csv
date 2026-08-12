@@ -1,0 +1,4 @@
+device,customers,total_revenue,avg_spending,avg_purchases
+Web,20,78876.06,3943.80,16.00
+Android,22,74945.08,3406.59,17.91
+iPhone,18,67931.01,3773.95,18.28
