@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-
-=======
 # Customer Analytics Project
 
 ## Project overview
@@ -50,4 +47,3 @@ The notebook reads the cleaned workbook but does not save changes to either Exce
 - `customer_analytics_username.ipynb` contains the analysis and executive report.
 - `cleaned_customer_data.xlsx` is the cleaned source dataset.
 - `customer_analytics_results.xlsx` is the existing results workbook and is not overwritten by the notebook.
->>>>>>> 97d2846 (Improve customer analytics report)
