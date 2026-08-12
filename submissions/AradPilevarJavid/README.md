@@ -39,6 +39,12 @@ Six rows have a `returned_items_exceeds_purchase_count` flag. I kept these rows 
 - Loyalty weights, inactivity thresholds, and minimum group sizes are analyst assumptions.
 - The discount comparison is observational and cannot show that discounts caused customer behavior.
 
+## How to run the analysis
+
+Keep the notebook and `cleaned_customer_data.xlsx` in the same folder, then run the notebook cells from top to bottom. Running cells in order is important because the later charts use summary tables created earlier in the notebook.
+
+The notebook reads the cleaned workbook but does not save changes to either Excel file. Results are displayed inside the notebook so the existing `customer_analytics_results.xlsx` file is not overwritten by accident.
+
 ## Files
 
 - `customer_analytics_username.ipynb` contains the analysis and executive report.
