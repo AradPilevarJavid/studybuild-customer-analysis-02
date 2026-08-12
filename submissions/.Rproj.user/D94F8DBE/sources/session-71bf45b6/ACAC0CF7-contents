@@ -1,0 +1,184 @@
+library(shiny)
+library(plotly)
+library(dplyr)
+library(ggplot2)
+
+# Sample data (replace with your actual analysis_df)
+# This is a placeholder. Replace with your real data.
+set.seed(123)
+analysis_df <- data.frame(
+  age = sample(18:70, 1000, replace = TRUE),
+  purchase_count = sample(1:50, 1000, replace = TRUE),
+  avg_order_value = round(runif(1000, 10, 500), 2),
+  total_spending = round(runif(1000, 50, 5000), 2),
+  last_purchase_days = sample(1:365, 1000, replace = TRUE),
+  returned_items = sample(0:10, 1000, replace = TRUE),
+  satisfaction_score = sample(1:10, 1000, replace = TRUE),
+  city = sample(c("Tehran", "Isfahan", "Shiraz", "Tabriz", "Mashhad", "Qom", "Ahvaz", "Kerman", "Yazd", "Rasht"), 1000, replace = TRUE),
+  signup_date = seq(as.Date("2020-01-01"), as.Date("2023-12-31"), length.out = 1000),
+  membership_tier = sample(c("Bronze", "Silver", "Gold", "Platinum"), 1000, replace = TRUE, prob = c(0.4, 0.3, 0.2, 0.1)),
+  gender = sample(c("M", "F"), 1000, replace = TRUE)
+)
+
+# UI
+ui <- fluidPage(
+  titlePanel("Interactive EDA Dashboard"),
+  navbarPage(
+    "Navigation",
+    id = "nav",
+    tabPanel("Overview",
+             fluidRow(
+               box(width = 12, h4("Select a variable to explore:")),
+               box(width = 12,
+                   selectInput("var", "Variable:",
+                               choices = c("age", "purchase_count", "avg_order_value", "total_spending",
+                                           "last_purchase_days", "returned_items", "satisfaction_score"),
+                               selected = "age"),
+                   sliderInput("bins", "Number of bins:", min = 5, max = 30, value = 15)
+               )
+             ),
+             plotlyOutput("histPlot")
+    ),
+    tabPanel("Categorical",
+             fluidRow(
+               box(width = 12, h4("Top 10 Cities")),
+               box(width = 12, plotlyOutput("cityPlot"))
+             ),
+             fluidRow(
+               box(width = 12, h4("Membership Tier by Gender")),
+               box(width = 12, plotlyOutput("tierGenderPlot"))
+             )
+    ),
+    tabPanel("Time Series",
+             fluidRow(
+               box(width = 12, h4("Monthly Signups")),
+               box(width = 12, plotlyOutput("signupPlot"))
+             )
+    ),
+    tabPanel("EDA Insights",
+             fluidRow(
+               box(width = 12, h4("Membership Tier by Gender (ggplot)")),
+               box(width = 12, plotlyOutput("tierGenderGGPlot"))
+             )
+             # Add more fluidRow/box pairs here as you paste in additional pair plots
+    ),
+    tabPanel("Color Check (Line 310)",
+             verbatimTextOutput("colorCheck")
+    )
+  )
+)
+
+# Server
+server <- function(input, output) {
+  
+  # Reactive data for histograms
+  hist_data <- reactive({
+    df <- analysis_df
+    req(input$var)
+    df[[input$var]]
+  })
+  
+  # Histogram plot
+  output$histPlot <- renderPlotly({
+    p <- plot_ly(analysis_df, x = ~get(input$var), type = "histogram",
+                 nbinsx = input$bins,
+                 marker = list(color = "#636EFA"),
+                 name = input$var) %>%
+      layout(title = paste("<b>", input$var, "Distribution</b>"),
+             xaxis = list(title = input$var),
+             yaxis = list(title = "Count"),
+             width = 700, height = 400)
+    p
+  })
+  
+  # Top 10 Cities
+  output$cityPlot <- renderPlotly({
+    top_cities <- analysis_df$city %>% table() %>% sort(decreasing = TRUE) %>% head(10) %>% names()
+    city_df <- analysis_df[analysis_df$city %in% top_cities, ]
+    p <- plot_ly(city_df, x = ~city, type = "histogram",
+                 marker = list(color = "#636EFA"),
+                 name = "City") %>%
+      layout(title = "<b>Top 10 Cities</b>",
+             xaxis = list(title = "City"),
+             yaxis = list(title = "Count"),
+             width = 900, height = 450)
+    p
+  })
+  
+  # Membership Tier by Gender (grouped bar chart, plotly version)
+  output$tierGenderPlot <- renderPlotly({
+    tier_gender <- analysis_df %>%
+      group_by(membership_tier, gender) %>%
+      summarise(count = n(), .groups = "drop")
+    
+    p <- plot_ly(tier_gender, x = ~membership_tier, y = ~count, type = "bar",
+                 color = ~gender,
+                 colors = c("M" = "#636EFA", "F" = "#EF553B"),
+                 name = ~gender,
+                 barmode = "group") %>%
+      layout(title = "<b>Membership Tier by Gender</b>",
+             xaxis = list(title = "Membership Tier",
+                          categoryorder = "array",
+                          categoryarray = c("Bronze", "Silver", "Gold", "Platinum")),
+             yaxis = list(title = "Count"),
+             width = 700, height = 450,
+             legend = list(title = list(text = "Gender")))
+    p
+  })
+  
+  # Monthly Signups
+  output$signupPlot <- renderPlotly({
+    signup_counts <- analysis_df %>%
+      mutate(month = format(signup_date, "%Y-%m")) %>%
+      group_by(month) %>%
+      summarise(count = n()) %>%
+      arrange(month)
+    
+    p <- plot_ly(signup_counts, x = ~month, y = ~count, type = "scatter", mode = "lines+markers",
+                 line = list(color = "#000000"),
+                 marker = list(color = "#000000")) %>%
+      layout(title = "<b>Monthly Signups</b>",
+             xaxis = list(title = "Month"),
+             yaxis = list(title = "Number of Signups"),
+             width = 800, height = 450)
+    p
+  })
+  
+  # --- EDA Insights tab: ggplot2 version of pair plots, wrapped in ggplotly for interactivity ---
+  
+  # Membership Tier by Gender (ggplot2 version of the Python fig2)
+  output$tierGenderGGPlot <- renderPlotly({
+    plot_df <- analysis_df %>%
+      mutate(membership_tier = factor(membership_tier,
+                                      levels = c("Bronze", "Silver", "Gold", "Platinum")))
+    
+    p <- ggplot(plot_df, aes(x = membership_tier, fill = gender)) +
+      geom_bar(position = position_dodge(width = 0.9), width = 0.8) +
+      scale_fill_manual(values = c("M" = "#636EFA", "F" = "#EF553B"), name = "Gender") +
+      labs(title = "Membership Tier by Gender",
+           x = "Membership Tier",
+           y = "Count") +
+      theme_minimal(base_size = 13) +
+      theme(plot.title = element_text(face = "bold"))
+    
+    ggplotly(p, tooltip = c("x", "fill", "y")) %>%
+      layout(width = 700, height = 450, bargap = 0.2)
+  })
+  
+  # Check line 310 for color (example: check if a column named 'color' exists)
+  output$colorCheck <- renderPrint({
+    if ("color" %in% colnames(analysis_df)) {
+      cat("Column 'color' exists in the dataset.\n")
+      cat("Sample values:\n")
+      print(head(analysis_df$color))
+    } else {
+      cat("No 'color' column found in the dataset.\n")
+      cat("Available columns:\n")
+      print(colnames(analysis_df))
+    }
+  })
+}
+
+# Run the app
+shinyApp(ui, server)
+
