@@ -1,0 +1,13 @@
+﻿metric,value
+n_discount_yes,26.0
+n_discount_no,34.0
+mean_spending_discount_yes,3642.421153846154
+mean_spending_discount_no,3736.7411764705885
+median_spending_discount_yes,1945.17
+median_spending_discount_no,2751.7200000000003
+mean_difference_yes_minus_no,-102.96842366968333
+bootstrap_95ci_low,-2146.1936131221723
+bootstrap_95ci_high,2400.8794434389124
+mann_whitney_U,391.0
+mann_whitney_p,0.45124570768318717
+cohens_d,-0.02181229667703332

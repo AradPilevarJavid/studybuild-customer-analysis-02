@@ -1,0 +1,55 @@
+customer_id,first_name,returned_items,return_status,return_flag
+1008,Reza,8,"Needs Review",1
+1009,Kimia,8,Valid,0
+1011,Neda,8,Valid,0
+1027,Kimia,8,Valid,0
+1015,Kimia,8,"Needs Review",1
+1017,Parsa,8,Valid,0
+1018,Ali,8,Valid,0
+1045,Maryam,8,Valid,0
+1021,Amir,8,Valid,0
+1044,Mina,7,Valid,0
+1037,Zahra,7,"Needs Review",1
+1005,Kimia,7,Valid,0
+1034,Maryam,7,Valid,0
+1060,Ali,7,Valid,0
+1010,Arash,7,Valid,0
+1054,Reza,7,Valid,0
+1052,Sara,7,Valid,0
+1028,Mina,6,Valid,0
+1003,Parsa,6,Valid,0
+1032,Neda,6,Valid,0
+1053,Sina,6,Valid,0
+1022,Reza,5,Valid,0
+1002,Sina,5,Valid,0
+1035,Arash,5,Valid,0
+1006,Amir,5,Valid,0
+1042,Sina,5,Valid,0
+1014,Reza,5,Valid,0
+1004,Sina,4,Valid,0
+1029,Ali,4,"Needs Review",1
+1041,Neda,4,Valid,0
+1030,Sina,4,Valid,0
+1047,Arash,4,Valid,0
+1019,Neda,4,Valid,0
+1056,Kimia,4,"Needs Review",1
+1057,Maryam,4,Valid,0
+1001,Reza,3,Valid,0
+1012,Arash,3,Valid,0
+1026,Amir,3,Valid,0
+1040,Amir,3,Valid,0
+1046,Maryam,3,Valid,0
+1016,Neda,3,Valid,0
+1025,Neda,2,Valid,0
+1024,Sina,2,"Needs Review",1
+1043,Kimia,2,Valid,0
+1023,Ali,2,Valid,0
+1007,Reza,2,Valid,0
+1050,Reza,2,Valid,0
+1031,Zahra,1,Valid,0
+1038,Amir,1,Valid,0
+1039,Parsa,1,Valid,0
+1020,Kimia,1,Valid,0
+1048,Sina,1,Valid,0
+1049,Ali,1,Valid,0
+1013,Neda,1,Valid,0

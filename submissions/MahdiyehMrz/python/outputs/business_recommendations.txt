@@ -1,0 +1,42 @@
+
+PROJECT 2 - BUSINESS RECOMMENDATIONS
+====================================
+
+1) CUSTOMER RETENTION
+---------------------
+Identify and contact High-Value customers who are currently classified
+as churn-risk (> 180 days since last purchase).
+Number of High-Value / Churn-Risk customers: 12
+
+Recommended action:
+- personalized reactivation campaign
+- loyalty incentive rather than a blanket discount
+- prioritize customers by Customer Value Score
+
+2) CITY-BASED MARKETING
+-----------------------
+Highest Marketing Opportunity Score city: Mashhad
+
+Recommended action:
+Allocate more experimental advertising budget to the highest-scoring
+cities, while validating campaigns using conversion/revenue uplift rather
+than customer count alone.
+
+3) SMART DISCOUNTING
+--------------------
+Mann-Whitney U p-value for total spending: 0.4512
+
+Statistical interpretation:
+No statistically significant spending difference was detected between discount and non-discount groups. Broad discounts should therefore not be assumed to increase spending.
+
+Recommended action:
+Use targeted discounts for customers/segments where incremental value is
+demonstrated. Avoid interpreting raw group differences as causal without
+A/B testing or a stronger causal design.
+
+LIMITATION
+----------
+The dataset contains only 60 customers. Machine-learning estimates are
+exploratory and have high uncertainty. A production churn model should be
+trained on a much larger longitudinal dataset with observed future churn
+outcomes and campaign/control information.

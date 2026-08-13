@@ -1,0 +1,24 @@
+city,customer_value_segment,customers,avg_spending
+Ahvaz,"High Value",2,8386.07
+Ahvaz,"Medium Value",2,2362.26
+Ahvaz,"Low Value",4,472.03
+Isfahan,"High Value",2,6756.80
+Isfahan,"Medium Value",2,3447.07
+Isfahan,"Low Value",1,1567.58
+Karaj,"High Value",2,9428.45
+Karaj,"Medium Value",2,2165.03
+Karaj,"Low Value",3,1000.96
+Mashhad,"High Value",6,9461.82
+Mashhad,"Medium Value",3,1845.83
+Mashhad,"Low Value",2,905.01
+Rasht,"High Value",1,6068.22
+Rasht,"Medium Value",4,2275.08
+Shiraz,"High Value",1,14354.34
+Shiraz,"Medium Value",2,1611.63
+Shiraz,"Low Value",3,1046.11
+Tabriz,"High Value",5,4959.35
+Tabriz,"Medium Value",2,2904.22
+Tabriz,"Low Value",5,1117.46
+Tehran,"High Value",1,5805.54
+Tehran,"Medium Value",3,1986.46
+Tehran,"Low Value",2,1120.97

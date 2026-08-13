@@ -1,0 +1,7 @@
+﻿variable,shapiro_statistic,p_value,decision_alpha_0_05
+age,0.9376238018962123,0.0042461817528593885,Reject normality
+purchase_count,0.9567116324971444,0.03255881968667015,Reject normality
+avg_order_value,0.9149097400313354,0.00048140396288924505,Reject normality
+total_spending,0.7079531515289517,1.2666119397953634e-09,Reject normality
+last_purchase_days,0.9697701583931871,0.14219260235765724,No evidence against normality
+satisfaction_score,0.8792792592579799,2.5057863655796775e-05,Reject normality
