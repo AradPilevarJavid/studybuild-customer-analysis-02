@@ -446,7 +446,7 @@ Overall, the analysis supports a shift from broad customer marketing toward **va
 - NumPy
 - Matplotlib
 - Seaborn
-- Jupyter Notebook
+- Google Colab
 - Exploratory Data Analysis (EDA)
 - Customer Segmentation
 - Business Intelligence
