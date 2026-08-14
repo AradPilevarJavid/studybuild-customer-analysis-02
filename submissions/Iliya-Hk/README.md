@@ -1,9 +1,9 @@
 # Project 02 — The First Day as a Junior Data Analyst
 
-Customer behavior analysis for the CEO, built on the cleaned dataset from Project 01 (60 customers, 17 attributes, no missing values).
+Customer behavior analysis for the CEO, built on the cleaned dataset from Project 01 (60 customers, 17 attributes, no missing values). **Revised after review feedback** — see "What changed" at the bottom.
 
 **Files in this submission**
-- `project02_analysis.ipynb` — full analysis, charts, and machine learning
+- `project02_analysis.ipynb` — full analysis, charts (all Seaborn where possible), and machine learning. All paths are **relative**, so it runs unmodified after a fresh clone.
 - `README.md` — this summary
 - `charts/` — exported PNGs of every chart in the notebook
 
@@ -11,77 +11,79 @@ Customer behavior analysis for the CEO, built on the cleaned dataset from Projec
 
 ---
 
-## 1. Business Overview (KPIs)
+## Question 1 — Customer Profile & Dominant Persona
 
-| KPI | Value |
-|---|---|
-| Total customers | 60 |
-| Total revenue | ~$201,986 |
-| Avg. order value | $213.16 |
-| Avg. purchases / customer | 17.4 |
-| Avg. customer value (CLV proxy) | $3,366 |
-| Avg. satisfaction (1–5) | 2.98 |
-| Discount usage rate | 43.3% |
-| Item return rate | 21.9% |
+Built profiles for **Age Group** (5 bands), **Gender**, **Membership Tier**, **Device**, and **Payment Method**, with one chart per dimension (4 charts total).
 
-The business is mid-sized with a middling satisfaction score and a notably high item return rate — both worth flagging for follow-up beyond this brief.
+**Dominant persona:** a **male customer aged 56–65**, **Gold** tier, shopping on **Android**, paying by **Online Wallet**. Gender skews male (58%/42%), and 56–65 is the single largest age band (17 of 60, 28%) — an older base than a typical e-commerce assumption.
 
-## 2. Recommended City for the Next Campaign: **Mashhad**
+## Question 2 — Province & City Analysis
 
-Mashhad has the most customers (11), the highest total revenue (~21% of company revenue, ~$43.2K), and average satisfaction in line with the company mean — the best combination of scale and health of any city. **Isfahan** has the highest average spend *per customer* (~$4,395) but too small a base (n=5) to lead a campaign; recommended as a secondary high-touch pilot rather than the primary target.
+Grouped by **Province + City** on Customer Count, Total/Average Spending, Average Purchase Count, Average Order Value, and Average Satisfaction, with a scatter of **Total Revenue vs. Average Satisfaction** (bubble size = customer count).
 
-## 3. Top 10 Customers for a Loyalty Campaign
+**Correction:** the city with the *most customers* is **Tabriz (12)**, not Mashhad (11) — an earlier draft misstated this. **Recommendation is still Mashhad**, but for the correct reason: Mashhad has the **highest total revenue** (~21% of company revenue) even with one fewer customer than Tabriz, meaning it converts to more revenue per customer. Isfahan (highest satisfaction, 4.4/5, and strong average spend, but only 5 customers) is proposed as a secondary high-touch pilot, not the lead campaign.
 
-Ranked by lifetime spending (`total_spending`). These 10 customers (17% of the base) drive a disproportionate share of revenue — see the notebook for the full ranked table and chart. Notably, several top spenders are **not** VIP tier — see finding #2 below.
+## Question 3 — Top 10 Valuable Customers (Composite Loyalty Score)
 
-## 4. Customers At Risk of Churn
+Replaced the previous "sort by `total_spending`" approach with a weighted **Loyalty Score** combining all four required factors: **Spending (35%) + Frequency (25%) + Recency (20%) + Satisfaction (20%)**, each min-max normalized before weighting. The output table includes `last_purchase_days`. A chart plots `purchase_count` vs. `total_spending`, colored by recency, with the Top 10 ring-highlighted. Each of the 10 customers now has an individual, printed reason for selection (e.g. "top-quartile spend," "very frequent buyer," "purchased very recently," "highly satisfied").
 
-Flagged when **both** recency is in the worst quartile (≥ 273.75 days since last purchase) **and** satisfaction is ≤ 2/5. **9 customers (15%)** meet this bar, representing **~$23,183** of historical revenue — a small, targeted list for win-back outreach.
+## Question 4 — Valuable Customers at Risk (redefined)
 
-## 5. Discount Users vs. Non-Users
+**Redefined per feedback.** A customer now only counts as at risk if **all three** hold: `total_spending` ≥ median, `purchase_count` ≥ median (so a zero-spend customer can never qualify), **and** `last_purchase_days` in the worst quartile. This yields **6 valuable-and-inactive customers** (~$27,422 of revenue), correctly excluding the previous list's zero-spend customer. The chart is now `last_purchase_days` vs. `total_spending` (not satisfaction), as required. The group is split into two tracks needing different actions:
+- **Dissatisfied at-risk (3 customers, satisfaction ≤ 2):** proactive service-recovery outreach.
+- **Satisfied-but-inactive at-risk (3 customers, satisfaction ≥ 3):** a lightweight re-engagement nudge, not an apology.
 
-Discount users report **higher satisfaction** (3.27 vs. 2.76) and slightly more frequent purchases, at a small reduction in average order value. None of these differences are statistically significant at n=60 (t-tests, all p > 0.18) — promising direction, not proof. Recommend a proper A/B test before scaling discounting decisions.
+## Question 5 — Discount Users vs. Non-Users (Device & Payment folded in)
 
-## 6. Customer Segmentation (RFM + K-Means)
+Device and payment-method breakdowns are now answered **inside** Question 5, not split into a later "extra analysis" section. Discount users report higher satisfaction (3.27 vs. 2.76) and slightly higher frequency; none of the differences are statistically significant at n=60 (t-tests, all p > 0.18) — a hypothesis to A/B test, not a proven effect. iPhone users who use a discount spend notably more than iPhone users who don't; Android shows the opposite direction — worth testing as a targeted-discount idea.
 
-Built Recency/Frequency/Monetary features and ran K-Means (unsupervised ML, k=4, chosen via elbow + silhouette analysis). Four segments emerge that **cut across** the existing membership tiers:
-- **Champions** — recent, frequent, high spend
-- **High-Value, At-Risk** — big historical spend, going quiet (top win-back priority)
-- **New / Promising** — recent signups, moderate activity
-- **Low-Value / Lapsed** — infrequent, low spend, inactive
+## Question 6 — CEO Report (6 KPIs, 3 Charts, 3 Recommendations)
 
-## 7. Pareto Analysis
+**Constrained to the required format** per feedback:
 
-The classic 80/20 rule does **not** strictly hold: it takes **~47% of customers** to reach 80% of revenue, not 20%. The top 20% of customers do generate a disproportionate **~51% of revenue**, so concentration exists — just less extreme than the Pareto heuristic assumes. Retention efforts need to reach well past the top decile to protect most of the revenue base.
+**6 KPIs:** Total Customers · Total Revenue · Avg. Order Value · Avg. Purchases/Customer · Avg. Satisfaction · Discount Usage Rate. *(The invalid "item return rate" KPI from the earlier draft — computed by dividing item counts by order counts, a unit mismatch, and not computable at all without total items purchased — has been removed.)*
 
-## 8. CEO Dashboard
+**3 Charts:** Revenue by City · Top 10 Customers by Loyalty Score · Satisfaction: Discount vs. Not.
 
-A 6-panel dashboard (revenue by city, spend by tier, satisfaction distribution, RFM segments, revenue concentration, discount vs. satisfaction) is built in the notebook — see `charts/08_ceo_dashboard.png`.
+**3 Recommendations (KPI → Evidence → Action):**
+1. **KPI:** City revenue concentration → **Evidence:** Mashhad generates ~21% of revenue despite Tabriz having more customers (12 vs. 11) → **Action:** lead the next campaign in Mashhad; pilot Isfahan.
+2. **KPI:** Membership-tier avg. spend inconsistency → **Evidence:** Silver out-spends Gold and VIP; VIP has the lowest avg. spend of all tiers → **Action:** audit the tier logic; use the Loyalty Score in the interim.
+3. **KPI:** Satisfaction gap by discount use → **Evidence:** 3.27 vs. 2.76 (not statistically significant at n=60) → **Action:** run a controlled A/B test before scaling discounts.
 
-## 9. Extra Analysis (beyond the brief)
+## Additional Analysis (clearly separated, not part of the 6 required questions)
 
-- **Correlation matrix** across all numeric features — no strong linear relationships (|r| < 0.4), reinforcing why the multi-feature RFM segmentation is more useful than any single-metric ranking.
-- **Membership tier vs. actual spending is a data-quality red flag**: average spend is *not* monotonic across Bronze → Silver → Gold → VIP. Silver out-spends Gold and VIP; VIP has the *lowest* average spend of the four tiers. `membership_tier` should not currently be trusted for value-based targeting.
-- **Gender / device / payment-method cuts**: card payers and iPhone users spend somewhat more on average — directional, not conclusive at this sample size.
-- **Tenure vs. spending**: essentially no correlation (r ≈ -0.05) — being a long-time customer doesn't predict higher lifetime value here. Age has a weak positive relationship (r ≈ 0.35).
-- **Supervised ML — churn-risk classifier**: a Random Forest (class-balanced) trained on the at-risk label highlights `avg_order_value`, `total_spending`, and `returned_items` as the top predictive features. With only 9 positive cases in 60 rows, this is treated as a hypothesis-generation tool, not a deployable model.
+Kept as extra material, now explicitly labeled as such so it doesn't crowd the graded answers:
+- **Pareto analysis** — correctly interpreted: the 80/20 pattern does not hold exactly in this dataset (more than 20% of customers are needed to reach 80% of revenue), and that's reported as-is rather than forced to fit the "80/20" name.
+- **Membership tier vs. actual spending** — flagged as a data-quality issue (§7.2).
+- **RFM + K-Means clustering** — **corrected**: the silhouette score is actually highest at **k=6 (0.368)**, not k=4. k=4 is used anyway, explicitly framed as a deliberate interpretability trade-off, not as "the silhouette-optimal choice."
+- **Correlation & tenure analysis** — no strong linear relationships; tenure barely correlates with spending (r ≈ -0.05).
+- **Supervised ML (Random Forest churn classifier)** — **corrected**: reported honestly as a weak model (0% recall on the at-risk class, ROC-AUC ≈ 0.66 on a tiny, imbalanced test split). Feature importances are **not** presented as a business finding, per feedback — the section exists to show the method and its limits transparently, not to claim insight it didn't earn.
 
-## 10. Three Business Recommendations
+## Limitations of This Dataset
 
-1. **Launch the next marketing campaign in Mashhad**, with a smaller high-value pilot in Isfahan.
-2. **Audit and fix the `membership_tier` assignment logic** before using it for targeting; use the RFM/K-Means segments instead, and prioritize the 9 flagged at-risk customers (~$23K of revenue) for win-back outreach this quarter.
-3. **Treat discounts as a satisfaction/engagement lever worth testing**, not a proven margin cost — validate the current directional signal with a controlled A/B test rather than rolling out broadly.
-
-## 11. Limitations of This Dataset
-
-- Small sample size (n=60) — most statistical tests are underpowered; treat directional findings as hypotheses.
-- Single snapshot, no per-transaction history — can't see trends, seasonality, or acceleration/deceleration in behavior.
-- No cost or margin data — revenue is used as a proxy for value throughout; real business impact depends on unseen margins.
-- `membership_tier` appears unreliable (see finding above) and its assignment logic isn't documented.
-- The churn "at-risk" label is a heuristic I defined, not an observed/confirmed churn event.
-- No acquisition-channel or marketing-spend data — the city recommendation addresses where existing customers are healthiest, not necessarily where a marketing dollar goes furthest.
-- Class imbalance (9 vs. 51) limits how much the supervised churn model can be trusted; it's illustrative of method, not deployment-ready.
+- Small sample size (n=60) — most statistical tests are underpowered.
+- **No true item return rate is computable** from this dataset — `returned_items` (item count) and `purchase_count` (order count) are different units, and total items purchased isn't recorded. Any return-rate figure from an earlier draft has been removed.
+- Single snapshot, no per-transaction history — no visibility into trends or seasonality.
+- No cost/margin data — revenue is used as a value proxy throughout.
+- `membership_tier` appears unreliable (see Additional Analysis).
+- The "at-risk" label (Question 4) is a heuristic I defined, not an observed churn event.
+- No acquisition-channel or marketing-spend data.
+- Severe class imbalance (6 vs. 54) makes the supervised churn model unreliable — included for transparency, not as a finding.
 
 ## Summary
 
-This analysis turns a raw customer table into three concrete actions for the CEO — **where** to spend the next marketing dollar, **who** to protect and win back right now, and **which internal system** (membership tiers) needs fixing before it misleads future targeting — while being explicit about where the data is too thin to justify full confidence.
+The analysis gives the CEO three concrete, evidence-backed actions (Question 6), a correctly-scoped churn watchlist with two distinct response tracks (Question 4), and a defensible way to rank customer value that doesn't rely on the currently-unreliable membership tier (Question 3) — while being explicit about where the data is too thin for full confidence.
+
+---
+
+## What changed after review feedback (score: 58/100)
+
+- **Q1 (previously missing):** added — Age Group, Gender, Membership Tier, Device, Payment Method profile with 4 charts and a named Dominant Persona.
+- **Q2:** switched to Province+City grouping, added avg. purchase count and AOV to the table, fixed the scatter to Total Revenue vs. Satisfaction, and corrected the factual error that Mashhad has "the most customers" (it doesn't — Tabriz has 12 vs. Mashhad's 11; the city recommendation itself is unchanged, but the justification is now correct).
+- **Q3:** replaced pure `total_spending` ranking with a weighted 4-factor Loyalty Score (Spending + Frequency + Recency + Satisfaction), added `last_purchase_days` to the table, added the required chart, and added individual reasoning per customer.
+- **Q4:** redefined "at risk" to require **value** (spending + frequency above median) **and** inactivity, removing the previous definition's zero-spend customer; fixed the chart to recency vs. spending; split the response into a dissatisfied track and a satisfied-but-inactive track.
+- **Q5:** merged the device/payment-method breakdown into this section instead of leaving it in a later extra-analysis block.
+- **Q6:** trimmed to exactly 6 KPIs and 3 charts, removed the invalid item-return-rate KPI, and reformatted the 3 recommendations into a KPI → Evidence → Action structure.
+- **K-Means:** corrected the silhouette-score narrative — k=6 actually scores highest; k=4 is now explicitly framed as an interpretability choice, not a silhouette-optimal one.
+- **Random Forest:** now reports its actual weak performance (0% recall, ROC-AUC ≈ 0.66) and no longer presents feature importances as a reliable finding.
+- **File paths:** confirmed relative throughout (`cleaned_dataset.xlsx`, `charts/...`) — no machine-specific absolute paths.
