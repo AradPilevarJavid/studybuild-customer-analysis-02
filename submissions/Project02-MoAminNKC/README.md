@@ -57,13 +57,13 @@ Identify the optimal province and city for targeted advertising allocation based
 **Primary Recommendation: Mashhad, Khorasan**
 *   **Advantage:** Primary investment is justified by three leading indicators:
     1. **Volume:** Highest total revenue generated ($43197.58).
-    2. **Density:** Largest established active user base (11 customers).
+    2. **Density:** The second-largest established active user base (11 customers).
     3. **Retention:** Stable average satisfaction score (2.9/5.0).
 *   **Risk:** Monitor market saturation limits due to the existing high customer density.
 
 **Alternative Recommendation: Tabriz, East Azerbaijan**
 *   **Advantage:** Represents a high-efficiency growth market justified by three unit-economic indicators:
-    1. **Value:** High average order value per customer ($3016.04).
+    1. **Value:** High average spending per customer ($3016.04).
     2. **Engagement:** Strong purchase frequency (15.8 orders/user).
     3. **Product-Market Fit:** Exceptional customer satisfaction (3.0/5.0).
 *   **Risk:** Scaling ad spend requires prior validation that the total addressable market (TAM) in this city is large enough to absorb higher volume.
@@ -197,18 +197,18 @@ Provide a five-minute overview of business health, prioritizing immediate opport
 
 **1. Primary Customer Opportunity: High-Efficiency Geographic Expansion**
 *   **KPI:** Average Order Value (AOV) and Satisfaction Score.
-*   **Evidence:** The geographic analysis (Chart 1) identifies secondary markets exhibiting lower total volume but superior unit economics and satisfaction compared to the primary volume-leading city.
-*   **Action:** Divert 20% of the top-of-funnel acquisition budget to the highest-AOV secondary city to test if these high-margin demographics can be acquired at scale without degrading the 5.0 satisfaction baseline.
+*   **Evidence:** The geographic analysis (Chart 1) identifies secondary markets exhibiting lower total volume but superior average spending and satisfaction compared to the primary volume-leading city.
+*   **Action:** A pilot should be implemented with a limited budget targeting the highest-AOV secondary city to test if these demographics can be acquired at scale. The budget should then be increased based on the results.
 
-**2. Primary Customer Risk: High-Value Churn**
+**2. Primary Customer Risk: Inactive High-Value Customers**
 *   **KPI:** Days Since Last Purchase (Inactivity).
-*   **Evidence:** The churn risk analysis (Chart 2) isolates a specific cohort of customers whose historical spending exceeds the median, but whose inactivity also exceeds the median. A subset of these users concurrently report below-average satisfaction.
-*   **Action:** Immediately deploy a high-touch, feedback-oriented outreach campaign exclusively to the dissatisfied, at-risk cohort. Do not utilize generic discount codes; utilize direct account management to repair the relationship.
+*   **Evidence:** The inactivity risk analysis (Chart 2) isolates a specific cohort of customers whose historical spending exceeds the median, but whose inactivity also exceeds the median. A subset of these users concurrently report below-average satisfaction.
+*   **Action:** Immediately deploy a high-touch outreach campaign to the dissatisfied, inactive cohort. The cause of deactivation may be poor user experience, but this is only one of the possibilities and needs to be investigated further through direct feedback.
 
 **3. Operational Efficiency: Discount Association**
 *   **KPI:** Average Returned Items.
-*   **Evidence:** The behavioral analysis (Chart 3) demonstrates the observational variance in return rates between discount users and non-discount users. 
-*   **Action:** Implement A/B testing on future discount campaigns, strictly monitoring the net-revenue post-returns. If discounts correlate heavily with elevated return rates, pivot promotional strategy from price-cutting to value-add (e.g., expedited shipping) to protect fulfillment margins.
+*   **Evidence:** The behavioral analysis (Chart 3) demonstrates the observational variance in average returned items between discount users and non-discount users. 
+*   **Action:** Implement A/B testing on future discount campaigns, strictly monitoring the net revenue. If discounts correlate heavily with elevated average returned items, pivot the promotional strategy from price-cutting to value-add (e.g., expedited shipping) to protect overall revenue retention.
 
 ### III. Strategic Visualizations
 
